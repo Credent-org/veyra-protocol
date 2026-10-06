@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// nirium — Official TypeScript SDK (x402 + MPP)
+// veyra — Official TypeScript SDK (x402 + MPP)
 // Versión: solo en package.json (no aquí: un número en un comentario se
 // desincroniza y ya mintió antes — decía 0.6.2 estando en 0.7.0).
 // ═══════════════════════════════════════════════════════════════
@@ -288,7 +288,7 @@ export interface PayoutRun {
 export interface AgentAttestationInput {
     /** ed25519 public key of the agent, as a Stellar address (G...). */
     key: string;
-    /** base64 or hex ed25519 signature over `nirium-audit-v1:<content_sha256>`. */
+    /** base64 or hex ed25519 signature over `veyra-audit-v1:<content_sha256>`. */
     signature: string;
     /** Optional free-form label for the agent (max 64 chars). */
     id?: string;
@@ -339,7 +339,7 @@ export interface ReportingSummary {
 
 // ─── Treasury (DeFindex) ─────────────────────────────────────
 //
-// Nirium never holds these funds. It holds the RebalanceManager role of a
+// Veyra never holds these funds. It holds the RebalanceManager role of a
 // DeFindex vault the client deploys and owns — every write below returns an
 // UNSIGNED XDR; you decide whether and when to sign it and call
 // submitTreasuryTx. rebalance() never takes a destination address, so
@@ -364,7 +364,7 @@ export interface TreasuryDeployOptions {
     emergencyManager?: string;
     /** Defaults to `manager`. */
     feeReceiver?: string;
-    /** Defaults to Nirium's configured role address; required as an explicit value on mainnet. */
+    /** Defaults to Veyra's configured role address; required as an explicit value on mainnet. */
     rebalanceManager?: string;
     assets: TreasuryAssetInput[];
     name: string;
@@ -429,7 +429,7 @@ export interface TreasuryInstruction {
 export interface TreasuryRebalanceOptions {
     vault: string;
     instructions: TreasuryInstruction[];
-    /** Defaults to Nirium's configured rebalanceManager address. */
+    /** Defaults to Veyra's configured rebalanceManager address. */
     caller?: string;
 }
 
@@ -445,7 +445,7 @@ export interface TreasuryRebalanceResult {
 export interface TreasuryProposeRebalanceOptions {
     vault: string;
     caller: string;
-    /** Rate (%) at or above which idle funds get proposed for Invest. Your mandate, not a Nirium default. */
+    /** Rate (%) at or above which idle funds get proposed for Invest. Your mandate, not a Veyra default. */
     enterAt: number;
     /** Rate (%) at or below which invested funds get proposed for Unwind. */
     exitAt: number;
@@ -503,9 +503,9 @@ export interface TreasuryVaultState {
     totalManagedFunds?: unknown;
     /** Balance of `holder` in the vault's asset — only present when you passed `holder`. */
     holderBalance?: string;
-    /** True only when Nirium holds RebalanceManager and NOT Manager on this vault. */
-    niriumIsRebalanceManagerOnly: boolean | null;
-    autonomousRebalancing: 'enabled' | 'invite-only' | 'not-managed-by-nirium';
+    /** True only when Veyra holds RebalanceManager and NOT Manager on this vault. */
+    veyraIsRebalanceManagerOnly: boolean | null;
+    autonomousRebalancing: 'enabled' | 'invite-only' | 'not-managed-by-veyra';
 }
 
 export interface TreasuryVaultSummary {
@@ -527,11 +527,11 @@ function queryString(params?: object): string {
 }
 
 /**
- * NiriumClient — Full API + WebSocket wrapper for the Nirium Agent.
+ * VeyraClient — Full API + WebSocket wrapper for the Veyra Agent.
  *
  * @example
  * ```typescript
- * import { Agent } from 'nirium';
+ * import { Agent } from 'veyra';
  *
  * const agent = new Agent({
  *   apiKey: 'nrm_your_key_here',
@@ -610,7 +610,7 @@ export class Agent {
 
         if (!response.ok) {
             const error = await response.json().catch(() => ({ error: response.statusText }));
-            throw new Error(`Nirium API Error [${response.status}]: ${JSON.stringify(error)}`);
+            throw new Error(`Veyra API Error [${response.status}]: ${JSON.stringify(error)}`);
         }
 
         return response.json() as Promise<T>;
@@ -845,7 +845,7 @@ export class Agent {
     // ─── Payouts / Disbursements ─────────────────────────────
     //
     // Non-custodial by construction: the node builds an unsigned XDR, you sign
-    // it with your own wallet and broadcast it via submitPayout. Nirium never
+    // it with your own wallet and broadcast it via submitPayout. Veyra never
     // holds funds and never sees your keys.
     //
     // Licensed for independent service payments only (contractors, freelancers,
@@ -942,7 +942,7 @@ export class Agent {
 
     // ─── Treasury (DeFindex) ─────────────────────────────────
     //
-    // Nirium never holds these funds — it holds the RebalanceManager role of
+    // Veyra never holds these funds — it holds the RebalanceManager role of
     // a DeFindex vault the client deploys and owns. Every write below returns
     // an unsigned XDR; sign it yourself and call submitTreasuryTx.
 
@@ -956,7 +956,7 @@ export class Agent {
         return this.request('GET', `/api/treasury/vault/${vaultId}${queryString({ holder })}`);
     }
 
-    /** List vaults Nirium has deployed or read, on the current network. */
+    /** List vaults Veyra has deployed or read, on the current network. */
     async getTreasuryVaults(manager?: string): Promise<{ ok: boolean; network: string; vaults: TreasuryVaultSummary[] }> {
         return this.request('GET', `/api/treasury/vaults${queryString({ manager })}`);
     }
@@ -968,7 +968,7 @@ export class Agent {
 
     /**
      * Build an unsigned XDR to deploy a DeFindex vault. `manager` keeps
-     * control (rescue, pause, revoke); Nirium only ever holds
+     * control (rescue, pause, revoke); Veyra only ever holds
      * `rebalanceManager`, which cannot withdraw or change roles. Sign with
      * `caller` and submit via submitTreasuryTx.
      */
@@ -991,7 +991,7 @@ export class Agent {
     /**
      * Build an unsigned XDR handing the RebalanceManager role to a new
      * address. Only the vault's current Manager can sign it — the same door
-     * that grants Nirium the role also revokes it.
+     * that grants Veyra the role also revokes it.
      */
     async setTreasuryRebalanceManager(
         options: TreasurySetRebalanceManagerOptions
@@ -1003,7 +1003,7 @@ export class Agent {
      * Build an unsigned rebalance XDR (Unwind/Invest between the vault's own
      * strategies — no other instruction is expressible). Sign with the
      * vault's RebalanceManager and submit via submitTreasuryTx. To have
-     * Nirium sign with its own key instead, see executeTreasuryRebalance.
+     * Veyra sign with its own key instead, see executeTreasuryRebalance.
      */
     async buildTreasuryRebalance(options: TreasuryRebalanceOptions): Promise<TreasuryRebalanceResult> {
         return this.request('POST', '/api/treasury/rebalance', options as unknown as Record<string, unknown>);
@@ -1016,7 +1016,7 @@ export class Agent {
      * sign yourself, or an empty `instructions` array with a `reason` if
      * there's nothing to do right now. Public: no allowlist, no invite —
      * works for any vault where `caller` is already the on-chain
-     * rebalanceManager. Unlike executeTreasuryRebalance, Nirium never
+     * rebalanceManager. Unlike executeTreasuryRebalance, Veyra never
      * executes on your behalf here, so this doesn't wait on the same legal
      * review the fully autonomous path does.
      */
@@ -1025,7 +1025,7 @@ export class Agent {
     }
 
     /**
-     * Sign and submit a rebalance with Nirium's own RebalanceManager key and
+     * Sign and submit a rebalance with Veyra's own RebalanceManager key and
      * wait for confirmation. Only available where that key actually lives —
      * mainnet's receive-only box returns 501 by design, not a broken 500.
      */
@@ -1074,7 +1074,7 @@ export class Agent {
         this.ws = new WebSocket(`${this.wsUrl}${authQuery}`);
 
         this.ws.on('open', () => {
-            console.log('[Nirium SDK] WebSocket connected');
+            console.log('[Veyra SDK] WebSocket connected');
             this.reconnectAttempts = 0;
 
             if (subscriptionId) {
@@ -1097,18 +1097,18 @@ export class Agent {
         });
 
         this.ws.on('close', () => {
-            console.log('[Nirium SDK] WebSocket disconnected');
+            console.log('[Veyra SDK] WebSocket disconnected');
             this.attemptReconnect(subscriptionId);
         });
 
         this.ws.on('error', (error: Error) => {
-            console.error('[Nirium SDK] WebSocket error:', error.message);
+            console.error('[Veyra SDK] WebSocket error:', error.message);
         });
     }
 
     private attemptReconnect(subscriptionId?: string): void {
         if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-            console.error('[Nirium SDK] Max reconnect attempts reached');
+            console.error('[Veyra SDK] Max reconnect attempts reached');
             return;
         }
 
@@ -1116,7 +1116,7 @@ export class Agent {
         const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
 
         setTimeout(() => {
-            console.log(`[Nirium SDK] Reconnecting (attempt ${this.reconnectAttempts})...`);
+            console.log(`[Veyra SDK] Reconnecting (attempt ${this.reconnectAttempts})...`);
             this.connectWebSocket(subscriptionId);
         }, delay);
     }
@@ -1139,7 +1139,7 @@ export class Agent {
      * // Browser: the key never leaves the wallet
      * agent.initX402({ signer: freighterSigner, network: 'stellar:pubnet' });
      *
-     * const data = await agent.x402Fetch('https://nirium-agent.fly.dev/api/v1/premium/signals');
+     * const data = await agent.x402Fetch('https://veyra-agent.fly.dev/api/v1/premium/signals');
      * ```
      */
     initX402(config: X402Config): void {
@@ -1254,18 +1254,18 @@ export class Agent {
 
 // ─── Telemetría de uso, opt-in, no autorización ────────────────
 //
-// x402Serve() corre en TU servidor, no en el de Nirium — Nirium no opera
+// x402Serve() corre en TU servidor, no en el de Veyra — Veyra no opera
 // nada aquí, y por default no se entera de nada tampoco. Si querés ayudar
 // a decidir si esta librería necesita algún tipo de gate más adelante
 // (ver x402serve-gate-design.md), podés optar por mandar un ping
 // best-effort con tu `payTo` (dirección pública Stellar) y un hash de tu
 // `facilitatorApiKey` — nunca la llave en sí — con
-// `NIRIUM_X402SERVE_TELEMETRY=true`. Apagado por default desde v0.14.1:
-// antes era opt-out, y ser el único canal que conecta a Nirium con el uso
+// `VEYRA_X402SERVE_TELEMETRY=true`. Apagado por default desde v0.14.1:
+// antes era opt-out, y ser el único canal que conecta a Veyra con el uso
 // real de un tercero no debía ser una decisión que tomáramos por vos.
 // Nunca bloquea, nunca lanza, nunca retrasa una respuesta de pago.
-const X402SERVE_TELEMETRY_URL = 'https://nirium-agent-mainnet.fly.dev/api/x402serve/telemetry';
-const X402SERVE_TELEMETRY_ENABLED = process.env.NIRIUM_X402SERVE_TELEMETRY === 'true';
+const X402SERVE_TELEMETRY_URL = 'https://veyra-agent-mainnet.fly.dev/api/x402serve/telemetry';
+const X402SERVE_TELEMETRY_ENABLED = process.env.VEYRA_X402SERVE_TELEMETRY === 'true';
 
 const pingX402ServeTelemetry = (body: Record<string, unknown>): void => {
     if (!X402SERVE_TELEMETRY_ENABLED) return;
@@ -1305,7 +1305,7 @@ export interface X402ServeConfig {
      * Optional replay/rate-limit protection - off by default. Providing
      * `guard.store` turns it on; without it, x402Serve() behaves exactly
      * as before. See x402-guard.ts and
-     * https://github.com/nirium-protocol/nirium/issues/91.
+     * https://github.com/veyra-protocol/veyra/issues/91.
      */
     guard?: X402GuardConfig;
 }
@@ -1452,7 +1452,7 @@ export function x402Serve(config: X402ServeConfig): any {
             facilitator,
             [{ network, server: new ServerScheme() }],
             {
-                appName: config.appName || 'Nirium',
+                appName: config.appName || 'Veyra',
                 ...(config.appLogo ? { appLogo: config.appLogo } : {}),
                 testnet: network === 'stellar:testnet',
             },
@@ -1495,7 +1495,7 @@ export function x402Serve(config: X402ServeConfig): any {
         res.status(d.status).json(d.body);
     };
 
-    return async function niriumX402(req: any, res: any, next: any) {
+    return async function veyraX402(req: any, res: any, next: any) {
         maybeFlushHeartbeat();
 
         if (config.guard) {

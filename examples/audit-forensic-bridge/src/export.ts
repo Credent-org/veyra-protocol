@@ -1,4 +1,4 @@
-import { Agent } from 'nirium';
+import { Agent } from 'veyra';
 import { createHash } from 'node:crypto';
 import { verifyAuditAttestation } from './attestation.js';
 import dotenv from 'dotenv';
@@ -7,13 +7,13 @@ import path from 'node:path';
 
 dotenv.config();
 
-const NIRIUM_API_KEY = process.env.NIRIUM_API_KEY || 'nrm_test_key';
-const NIRIUM_BASE_URL = process.env.NIRIUM_BASE_URL || 'http://localhost:3001';
+const VEYRA_API_KEY = process.env.VEYRA_API_KEY || 'nrm_test_key';
+const VEYRA_BASE_URL = process.env.VEYRA_BASE_URL || 'http://localhost:3001';
 const IPFS_GATEWAY = process.env.IPFS_GATEWAY || 'https://ipfs.io/ipfs/';
 
 const agent = new Agent({
-  apiKey: NIRIUM_API_KEY,
-  baseUrl: NIRIUM_BASE_URL,
+  apiKey: VEYRA_API_KEY,
+  baseUrl: VEYRA_BASE_URL,
 });
 
 export interface VerifiedAnchorReportItem {

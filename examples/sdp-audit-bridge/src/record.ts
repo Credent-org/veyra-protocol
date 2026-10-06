@@ -1,11 +1,11 @@
 import { createHash } from 'node:crypto';
 import { StrKey } from '@stellar/stellar-sdk';
 
-export const AUDIT_SCHEMA = 'nirium.sdp-audit.v1' as const;
+export const AUDIT_SCHEMA = 'veyra.sdp-audit.v1' as const;
 export const AUDIT_NETWORK = 'testnet' as const;
 export const MAX_AUDIT_RECORD_BYTES = 8 * 1024;
 // Even the smallest valid record with 120 SHA-256 transaction hashes exceeds
-// Nirium's 8 KiB limit. Reject it before issuing needless Horizon requests.
+// Veyra's 8 KiB limit. Reject it before issuing needless Horizon requests.
 export const MAX_BATCH_TX_HASHES = 119;
 
 const STROOPS_PER_UNIT = 10_000_000n;
@@ -309,7 +309,7 @@ export function assertAuditRecordSize(record: SdpAuditRecord): void {
   const byteLength = auditRecordByteLength(record);
   if (byteLength > MAX_AUDIT_RECORD_BYTES) {
     throw new Error(
-      `Audit record is ${byteLength} bytes; Nirium accepts at most ${MAX_AUDIT_RECORD_BYTES} bytes. Narrow or split the batch manually.`,
+      `Audit record is ${byteLength} bytes; Veyra accepts at most ${MAX_AUDIT_RECORD_BYTES} bytes. Narrow or split the batch manually.`,
     );
   }
 }

@@ -1,7 +1,7 @@
 import "dotenv/config";
 
 import express, { type Express } from "express";
-import { x402Serve } from "nirium";
+import { x402Serve } from "veyra";
 import { pathToFileURL } from "node:url";
 
 import { revealLoot } from "./lootTable.js";

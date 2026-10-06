@@ -1,8 +1,8 @@
 # x402-Protected API Template (Deploy to Vercel)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnirium-protocol%2Fnirium%2Ftree%2Fmain%2Fexamples%2Fdeploy-x402-vercel&env=PAY_TO,NETWORK&envDescription=Stellar%20public%20key%20(G...)%20to%20receive%20payments%20and%20network&envLink=https%3A%2F%2Fnirium.xyz%2Fdocs)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fveyra-protocol%2Fveyra%2Ftree%2Fmain%2Fexamples%2Fdeploy-x402-vercel&env=PAY_TO,NETWORK&envDescription=Stellar%20public%20key%20(G...)%20to%20receive%20payments%20and%20network&envLink=https%3A%2F%2Fveyra.xyz%2Fdocs)
 
-A minimal, zero-config template for deploying pay-per-request APIs protected by the **x402 protocol** and **Nirium SDK** on Vercel.
+A minimal, zero-config template for deploying pay-per-request APIs protected by the **x402 protocol** and **Veyra SDK** on Vercel.
 
 ---
 
@@ -23,7 +23,7 @@ A minimal, zero-config template for deploying pay-per-request APIs protected by 
 
 ## Replay/rate-limit protection (on by default in this template)
 
-`x402Serve()` on its own verifies and settles a payment; it does not stop the same payment proof from being replayed, and it does not rate-limit callers - see [nirium-protocol/nirium#91](https://github.com/nirium-protocol/nirium/issues/91). This template turns both on via `x402Serve()`'s `guard` config, using `lib/x402-guard-memory-store.ts` (a plain in-memory store):
+`x402Serve()` on its own verifies and settles a payment; it does not stop the same payment proof from being replayed, and it does not rate-limit callers - see [veyra-protocol/veyra#91](https://github.com/veyra-protocol/veyra/issues/91). This template turns both on via `x402Serve()`'s `guard` config, using `lib/x402-guard-memory-store.ts` (a plain in-memory store):
 
 ```ts
 const serveMiddleware = x402Serve({
@@ -38,10 +38,10 @@ const serveMiddleware = x402Serve({
 
 A reused `PAYMENT-SIGNATURE` header against the same route gets `409 payment_replayed`; too many requests from one IP get `429 rate_limited`; if the guard's store is down, requests with a payment proof get `503` rather than being let through unprotected.
 
-**The in-memory store is a demo convenience, not production-durable**: Vercel serverless functions aren't guaranteed to reuse the same process between requests, so a replay hitting a different instance than the original won't be caught. For real production use, swap it for Upstash (the store `nirium` ships a reference adapter for):
+**The in-memory store is a demo convenience, not production-durable**: Vercel serverless functions aren't guaranteed to reuse the same process between requests, so a replay hitting a different instance than the original won't be caught. For real production use, swap it for Upstash (the store `veyra` ships a reference adapter for):
 
 ```ts
-import { createUpstashX402GuardStore } from "nirium";
+import { createUpstashX402GuardStore } from "veyra";
 
 const store = createUpstashX402GuardStore({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -86,11 +86,11 @@ content-type: application/json
 
 ### 2. Request with x402 payment (200 OK)
 
-Using Nirium CLI or TypeScript SDK to settle payment:
+Using Veyra CLI or TypeScript SDK to settle payment:
 
 ```bash
-# Using Nirium CLI
-nirium pay https://<your-vercel-domain>.vercel.app/api/ascii?style=cat
+# Using Veyra CLI
+veyra pay https://<your-vercel-domain>.vercel.app/api/ascii?style=cat
 
 # Or attaching a valid PAYMENT-SIGNATURE header via x402 client
 curl -i -H "PAYMENT-SIGNATURE: <valid_payment_signature>" https://<your-vercel-domain>.vercel.app/api/ascii?style=cat

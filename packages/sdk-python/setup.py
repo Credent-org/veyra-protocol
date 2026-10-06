@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="nirium",
+    name="veyra",
     version="0.11.0",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
@@ -18,8 +18,8 @@ setup(
             "langchain-core>=0.3.0",
         ],
     },
-    author="Nirium Team",
+    author="Veyra Team",
     description="Autonomous treasury and agentic-payments infrastructure for Stellar (x402 + MPP) — Python client",
-    keywords=["nirium", "stellar", "defi", "x402", "mpp", "agentic-payments", "soroban"],
+    keywords=["veyra", "stellar", "defi", "x402", "mpp", "agentic-payments", "soroban"],
     python_requires=">=3.10",
 )

@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { Keypair } from '@stellar/stellar-sdk';
 
-export const DOMAIN_PREFIX = 'nirium-audit-v1:';
+export const DOMAIN_PREFIX = 'veyra-audit-v1:';
 
 export function computeRecordSha256(record: Record<string, unknown>): string {
   const raw = JSON.stringify(record);

@@ -1,25 +1,25 @@
-# nirium
+# veyra
 
-Autonomous treasury and agentic-payments infrastructure for **Nirium Protocol** on Stellar/Soroban — Python client.
+Autonomous treasury and agentic-payments infrastructure for **Veyra Protocol** on Stellar/Soroban — Python client.
 
-Nirium agents rebalance USDC ↔ CETES (tokenized Mexican T-bills via Etherfuse) 24/7 without human intervention. Built for developers who want to integrate autonomous treasury management, agentic payments (x402 + MPP), and real-time market signals into their applications.
+Veyra agents rebalance USDC ↔ CETES (tokenized Mexican T-bills via Etherfuse) 24/7 without human intervention. Built for developers who want to integrate autonomous treasury management, agentic payments (x402 + MPP), and real-time market signals into their applications.
 
 ## Install
 
 ```bash
-pip install nirium
+pip install veyra
 # Optional LangChain adapter
-pip install 'nirium[langchain]'
+pip install 'veyra[langchain]'
 ```
 
 ## Quick Start
 
 ```python
 import asyncio
-from nirium import Agent
+from veyra import Agent
 
 agent = Agent(
-    api_url="https://nirium-agent.fly.dev",
+    api_url="https://veyra-agent.fly.dev",
     api_key="sk_inst_your_key_here",
 )
 
@@ -32,8 +32,8 @@ async def main():
     market = await agent.get_market()
     print(f"XLM Price: ${market['xlmPrice']:.4f}")
 
-    # Trigger a demo strategy on Nirium's own shared testnet vault — a real,
-    # working transaction, not a simulation, but it moves Nirium's testnet
+    # Trigger a demo strategy on Veyra's own shared testnet vault — a real,
+    # working transaction, not a simulation, but it moves Veyra's testnet
     # funds, not yours. To rebalance YOUR OWN vault, see Treasury Rebalance below.
     result = await agent.execute("blend-yield", "USDC", {"amount": 5000})
     print(f"Success: {result['success']} | TX: {result.get('txHash')}")
@@ -46,9 +46,9 @@ asyncio.run(main())
 The Python SDK includes a hardened, self-healing WebSocket signals client with exponential backoff, randomized jitter, configurable retry caps, automatic deduplication, and typed status/error channels.
 
 ```python
-from nirium import Agent, WebSocketMaxRetriesExceeded, WebSocketStatus
+from veyra import Agent, WebSocketMaxRetriesExceeded, WebSocketStatus
 
-agent = Agent(api_url="https://nirium-agent.fly.dev", api_key="sk_inst_...", token="eyJhbG...")
+agent = Agent(api_url="https://veyra-agent.fly.dev", api_key="sk_inst_...", token="eyJhbG...")
 
 # 1. Listen for market signals
 @agent.on("signal")
@@ -87,10 +87,10 @@ async def start_stream():
 
 ```python
 # API Key for REST endpoints
-agent = Agent(api_url="https://nirium-agent.fly.dev", api_key="sk_inst_...")
+agent = Agent(api_url="https://veyra-agent.fly.dev", api_key="sk_inst_...")
 
 # With JWT token for WebSocket
-agent = Agent(api_url="https://nirium-agent.fly.dev", api_key="sk_inst_...", token="eyJhbG...")
+agent = Agent(api_url="https://veyra-agent.fly.dev", api_key="sk_inst_...", token="eyJhbG...")
 ```
 
 ## Payment Protocols
@@ -102,19 +102,19 @@ agent.init_x402(
     network="stellar:testnet"
 )
 
-response = await agent.x402_fetch("https://nirium-agent.fly.dev/api/v1/premium/signals")
+response = await agent.x402_fetch("https://veyra-agent.fly.dev/api/v1/premium/signals")
 ```
 
 ### LangChain tool — pay x402 from any agent
 
-`NiriumX402Tool` is a LangChain `BaseTool` that wraps the same `init_x402` / `x402_fetch` client. A ReAct-style agent can pay a protected Stellar endpoint as a normal tool call. The Stellar secret is constructor/env configuration only: it never appears in the tool description, args schema, error text, or return value.
+`VeyraX402Tool` is a LangChain `BaseTool` that wraps the same `init_x402` / `x402_fetch` client. A ReAct-style agent can pay a protected Stellar endpoint as a normal tool call. The Stellar secret is constructor/env configuration only: it never appears in the tool description, args schema, error text, or return value.
 
 ```python
 import os
 from langchain.agents import create_agent
-from nirium import NiriumX402Tool
+from veyra import VeyraX402Tool
 
-tool = NiriumX402Tool(
+tool = VeyraX402Tool(
     secret_key=os.environ["STELLAR_SECRET_KEY"],  # or set the env var and omit this
     network="stellar:testnet",
 )
@@ -123,12 +123,12 @@ agent = create_agent(model="gpt-4o-mini", tools=[tool])
 result = agent.invoke({
     "messages": [{
         "role": "user",
-        "content": "Fetch https://nirium-agent.fly.dev/api/v1/premium/signals",
+        "content": "Fetch https://veyra-agent.fly.dev/api/v1/premium/signals",
     }]
 })
 ```
 
-Environment variables: `STELLAR_SECRET_KEY` (or `STELLAR_TESTNET_SECRET_KEY`), optional `NIRIUM_X402_NETWORK` (default `stellar:testnet`).
+Environment variables: `STELLAR_SECRET_KEY` (or `STELLAR_TESTNET_SECRET_KEY`), optional `VEYRA_X402_NETWORK` (default `stellar:testnet`).
 
 Runnable example: [`examples/langchain-x402-agent`](../../examples/langchain-x402-agent).
 
@@ -139,7 +139,7 @@ agent.init_mpp(
     network="stellar:testnet",
 )
 
-response = await agent.mpp_fetch("https://nirium-agent.fly.dev/api/v1/mpp/signals")
+response = await agent.mpp_fetch("https://veyra-agent.fly.dev/api/v1/mpp/signals")
 ```
 
 ### Endpoint Access Model
@@ -154,7 +154,7 @@ response = await agent.mpp_fetch("https://nirium-agent.fly.dev/api/v1/mpp/signal
 
 ## Payouts
 
-Batch disbursement, non-custodial: the node builds an **unsigned** transaction, you sign it with your own wallet and broadcast it. Nirium never holds funds and never sees your keys.
+Batch disbursement, non-custodial: the node builds an **unsigned** transaction, you sign it with your own wallet and broadcast it. Veyra never holds funds and never sees your keys.
 
 ```python
 run = await agent.create_payout_run(
@@ -183,7 +183,7 @@ The agent decides what it would do, using the same decision logic as the autonom
 proposal = await agent.propose_treasury_rebalance(
     vault="CABC...",
     caller="GABC...",   # must already be this vault's rebalanceManager on-chain
-    enter_at=2.5,        # your own mandate — Nirium never supplies a default here
+    enter_at=2.5,        # your own mandate — Veyra never supplies a default here
     exit_at=2.0,
 )
 
@@ -194,9 +194,9 @@ else:
     print("Nothing to propose:", proposal["reason"])
 ```
 
-### Autonomous — Nirium signs, invite-only during legal review
+### Autonomous — Veyra signs, invite-only during legal review
 
-`execute_treasury_rebalance()` has Nirium sign and submit with its own RebalanceManager key — full autonomy, no per-cycle approval. **This is invite-only while a specific legal question stays open**: whether executing on a client's behalf without taking custody still counts as regulated facilitation under Mexican law. It only runs against vaults explicitly allowlisted server-side; calling it against any other vault returns 403, and Nirium's mainnet infrastructure returns 501 for it entirely, since that box holds no signing key by design. Ask if you want autonomous execution today — otherwise, `propose_treasury_rebalance()` above gives you the same decision-making with you as the one who signs.
+`execute_treasury_rebalance()` has Veyra sign and submit with its own RebalanceManager key — full autonomy, no per-cycle approval. **This is invite-only while a specific legal question stays open**: whether executing on a client's behalf without taking custody still counts as regulated facilitation under Mexican law. It only runs against vaults explicitly allowlisted server-side; calling it against any other vault returns 403, and Veyra's mainnet infrastructure returns 501 for it entirely, since that box holds no signing key by design. Ask if you want autonomous execution today — otherwise, `propose_treasury_rebalance()` above gives you the same decision-making with you as the one who signs.
 
 ## Audit Trail
 
@@ -233,7 +233,7 @@ Anchor a **hash** rather than the data itself: IPFS content cannot be deleted, s
 | Admin | `configure_llm()` |
 | WebSocket | `subscribe()`, `on()` decorator |
 | x402 Payments | `init_x402()`, `x402_fetch()` |
-| LangChain | `NiriumX402Tool`, `create_nirium_x402_tool()` |
+| LangChain | `VeyraX402Tool`, `create_veyra_x402_tool()` |
 | MPP Payments | `init_mpp()`, `mpp_fetch()` |
 
 ## Requirements
@@ -241,16 +241,16 @@ Anchor a **hash** rather than the data itself: IPFS content cannot be deleted, s
 - Python >= 3.10
 - aiohttp >= 3.9.0
 - websockets >= 13.0
-- langchain-core >= 0.3.0 (only for `nirium[langchain]`)
+- langchain-core >= 0.3.0 (only for `veyra[langchain]`)
 
 ## Links
 
-- [Documentation](https://nirium.xyz/docs)
-- [Developer Sandbox](https://nirium.xyz/sandbox)
-- [API Reference](https://nirium.xyz/docs/api)
-- [MCP Server Integration](https://nirium.xyz/docs/mcp)
-- [GitHub](https://github.com/nirium-protocol/nirium-sdk)
+- [Documentation](https://veyra.xyz/docs)
+- [Developer Sandbox](https://veyra.xyz/sandbox)
+- [API Reference](https://veyra.xyz/docs/api)
+- [MCP Server Integration](https://veyra.xyz/docs/mcp)
+- [GitHub](https://github.com/veyra-protocol/veyra-sdk)
 
 ## License
 
-Apache 2.0 — Nirium Protocol
+Apache 2.0 — Veyra Protocol

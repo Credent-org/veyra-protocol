@@ -1,8 +1,8 @@
-# Contributing to nirium-sdk
+# Contributing to veyra-sdk
 
 Thank you for your interest in contributing. This repository holds the open-source developer toolkit: the TypeScript SDK, the Python SDK, the CLI, the MCP server, examples, and docs. It does not contain the agent runtime or the Soroban contracts, which are maintained privately.
 
-> **Note:** Nirium operates under the [Stellar Code of Conduct](https://github.com/Eras256/Nirium/blob/main/CODE_OF_CONDUCT.md). Violations can be reported to [niriumprotocol@gmail.com](mailto:niriumprotocol@gmail.com) or [community@stellar.org](mailto:community@stellar.org).
+> **Note:** Veyra operates under the [Stellar Code of Conduct](https://github.com/Eras256/Veyra/blob/main/CODE_OF_CONDUCT.md). Violations can be reported to [veyraprotocol@gmail.com](mailto:veyraprotocol@gmail.com) or [community@stellar.org](mailto:community@stellar.org).
 
 ---
 
@@ -17,8 +17,8 @@ Thank you for your interest in contributing. This repository holds the open-sour
 ### Getting Started
 
 ```bash
-git clone https://github.com/nirium-protocol/nirium-sdk.git
-cd nirium-sdk
+git clone https://github.com/veyra-protocol/veyra-sdk.git
+cd veyra-sdk
 
 # TypeScript SDK / CLI / MCP server each have their own package.json
 cd packages/sdk && npm install && npm run build
@@ -41,11 +41,11 @@ cd packages/sdk-python && pip install -e .
 ## Repository Structure
 
 ```
-nirium-sdk/
-├── packages/sdk/           → TypeScript SDK (npm: nirium)
-├── packages/sdk-python/    → Python SDK (pip: nirium)
-├── packages/mcp/           → MCP server (npm: nirium-mcp)
-├── packages/cli/           → CLI (npm: nirium-cli)
+veyra-sdk/
+├── packages/sdk/           → TypeScript SDK (npm: veyra)
+├── packages/sdk-python/    → Python SDK (pip: veyra)
+├── packages/mcp/           → MCP server (npm: veyra-mcp)
+├── packages/cli/           → CLI (npm: veyra-cli)
 ├── docs/                   → Quickstarts and guides
 └── examples/               → Runnable integrations (Express, Next.js, treasury vault)
 ```
@@ -94,7 +94,7 @@ Every commit produced with AI assistance carries a `Co-Authored-By: Claude Sonne
 
 If you discover a security vulnerability, **do not open a public issue.**
 
-Email: **niriumprotocol@gmail.com**
+Email: **veyraprotocol@gmail.com**
 
 Include: description, reproduction steps, potential impact, and any suggested remediation.
 

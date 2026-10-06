@@ -1,8 +1,8 @@
 # Unity game x402 pay-per-action gate
 
 A minimal, standalone reference for gating one paid game action — here,
-"reveal loot" — behind [x402](https://nirium.xyz/developers) micropayments on
-Stellar, using nirium's `x402Serve()` on the backend and the [Stellar Unity
+"reveal loot" — behind [x402](https://veyra.xyz/developers) micropayments on
+Stellar, using veyra's `x402Serve()` on the backend and the [Stellar Unity
 Developer Kit](https://github.com/towa-hi/StellarUnityDevToolkit) (SUDK) on
 the client.
 
@@ -155,7 +155,7 @@ npm run wallet-bridge-smoke
 ```
 
 This starts the real server in-process and drives it with the real
-`nirium` x402 client against the real OpenZeppelin Channels testnet
+`veyra` x402 client against the real OpenZeppelin Channels testnet
 facilitator and real Stellar testnet — the exact protocol shape a
 SUDK-based Unity client needs to reproduce, provable without a Unity
 Editor. On success it prints the unlocked loot and the settled Stellar

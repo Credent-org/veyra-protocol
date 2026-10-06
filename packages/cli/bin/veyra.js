@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // ═══════════════════════════════════════════════════════════════
-// Nirium — Autonomous Agent CLI (v1.1.4)
+// Veyra — Autonomous Agent CLI (v1.1.4)
 // ═══════════════════════════════════════════════════════════════
 //
 // Everything below is one flat file on purpose, not a build artifact:
@@ -17,23 +17,23 @@ import os from 'os';
 import crypto from 'crypto';
 import { execSync } from 'child_process';
 import express from 'express';
-import NiriumAgent, { x402Serve } from 'nirium';
+import VeyraAgent, { x402Serve } from 'veyra';
 import { Keypair, StrKey } from '@stellar/stellar-sdk';
 
 const program = new Command();
 
 program
-    .name('nirium')
-    .description('Nirium protocol development tool')
+    .name('veyra')
+    .description('Veyra protocol development tool')
     .version('1.1.4');
 
 // --- COMMAND: create bot ---
 program
     .command('create')
     .argument('<type>', 'What to create: x402 (a server that charges) or bot (a signal listener)')
-    .option('-n, --name <name>', 'Name of the project', 'nirium-bot-v1')
+    .option('-n, --name <name>', 'Name of the project', 'veyra-bot-v1')
     .option('-t, --template <template>', 'Language template (ts, py) — bot only', 'ts')
-    .description('Scaffold a new Nirium project')
+    .description('Scaffold a new Veyra project')
     .action(async (type, options) => {
         if (type !== 'bot' && type !== 'x402') {
             console.error('❌ Error: type must be "x402" (charge for your API) or "bot" (listen to signals).');
@@ -167,7 +167,7 @@ program
 // --- COMMAND: config ---
 program
     .command('config')
-    .description('⚙️ Manage local CLI configuration store (~/.niriumrc.json)')
+    .description('⚙️ Manage local CLI configuration store (~/.veyrarc.json)')
     .argument('[action]', 'Action to perform: set, get, list, or delete', 'list')
     .argument('[key]', 'Configuration key name')
     .argument('[value]', 'Value to set for the configuration key')
@@ -186,7 +186,7 @@ function scaffoldX402(dir, name) {
         type: 'module',
         scripts: { dev: 'tsx watch src/server.ts', build: 'tsc' },
         dependencies: {
-            nirium: '^0.15.0',
+            veyra: '^0.15.0',
             express: '^5.1.0',
             '@x402/express': '^2.17.0',
             '@x402/core': '^2.17.0',
@@ -202,7 +202,7 @@ function scaffoldX402(dir, name) {
     fs.mkdirSync(path.join(dir, 'src'), { recursive: true });
     fs.writeFileSync(path.join(dir, 'src', 'server.ts'), `
 import express from 'express';
-import { x402Serve } from 'nirium';
+import { x402Serve } from 'veyra';
 import 'dotenv/config';
 
 const app = express();
@@ -252,7 +252,7 @@ function scaffoldTS(dir, name) {
             "build": "tsc"
         },
         dependencies: {
-            "nirium": "^0.15.0",
+            "veyra": "^0.15.0",
             "tsx": "^4.19.0",
             "typescript": "^5.7.0",
             "dotenv": "^16.4.5"
@@ -266,12 +266,12 @@ function scaffoldTS(dir, name) {
     fs.mkdirSync(path.join(dir, 'src'));
 
     const indexSrc = `
-import { Agent } from 'nirium';
+import { Agent } from 'veyra';
 import 'dotenv/config';
 
 const agent = new Agent({
-  baseUrl: process.env.NIRIUM_API_URL || 'https://nirium-agent.fly.dev',
-  apiKey: process.env.NIRIUM_API_KEY
+  baseUrl: process.env.VEYRA_API_URL || 'https://veyra-agent.fly.dev',
+  apiKey: process.env.VEYRA_API_KEY
 });
 
 agent.subscribe((signal) => {
@@ -279,10 +279,10 @@ agent.subscribe((signal) => {
   // Logic to execute on signals...
 });
 
-console.log('✅ Listening for Nirium signals...');
+console.log('✅ Listening for Veyra signals...');
 `;
     fs.writeFileSync(path.join(dir, 'src', 'index.ts'), indexSrc);
-    fs.writeFileSync(path.join(dir, '.env'), 'NIRIUM_API_URL=https://nirium-agent.fly.dev\nNIRIUM_API_KEY=');
+    fs.writeFileSync(path.join(dir, '.env'), 'VEYRA_API_URL=https://veyra-agent.fly.dev\nVEYRA_API_KEY=');
     fs.writeFileSync(path.join(dir, 'tsconfig.json'), JSON.stringify({
         compilerOptions: {
             target: "es2022",
@@ -295,21 +295,21 @@ console.log('✅ Listening for Nirium signals...');
 }
 
 function scaffoldPY(dir, name) {
-    const reqs = "nirium>=0.9.0\npython-dotenv>=1.0.0";
+    const reqs = "veyra>=0.9.0\npython-dotenv>=1.0.0";
     fs.writeFileSync(path.join(dir, 'requirements.txt'), reqs);
 
     const mainSrc = `
 import asyncio
 import os
-from nirium import Agent
+from veyra import Agent
 from dotenv import load_dotenv
 
 load_dotenv()
 
 async def main():
     agent = Agent(
-        api_url=os.getenv("NIRIUM_API_URL", "https://nirium-agent.fly.dev"),
-        api_key=os.getenv("NIRIUM_API_KEY")
+        api_url=os.getenv("VEYRA_API_URL", "https://veyra-agent.fly.dev"),
+        api_key=os.getenv("VEYRA_API_KEY")
     )
 
     @agent.on("signal")
@@ -318,7 +318,7 @@ async def main():
 
     @agent.on("connected")
     async def on_connect(data):
-        print("✅ Connected to Nirium Neural Loop")
+        print("✅ Connected to Veyra Neural Loop")
 
     await agent.subscribe()
 
@@ -326,14 +326,14 @@ if __name__ == "__main__":
     asyncio.run(main())
 `;
     fs.writeFileSync(path.join(dir, 'main.py'), mainSrc);
-    fs.writeFileSync(path.join(dir, '.env'), 'NIRIUM_API_URL=https://nirium-agent.fly.dev\nNIRIUM_API_KEY=');
+    fs.writeFileSync(path.join(dir, '.env'), 'VEYRA_API_URL=https://veyra-agent.fly.dev\nVEYRA_API_KEY=');
 }
 
 // ═══════════════════════════════════════════════════════════════
-// config — ~/.niriumrc.json store, shared by pay/serve/config
+// config — ~/.veyrarc.json store, shared by pay/serve/config
 // ═══════════════════════════════════════════════════════════════
 
-const CONFIG_FILE = path.join(os.homedir(), '.niriumrc.json');
+const CONFIG_FILE = path.join(os.homedir(), '.veyrarc.json');
 
 function loadConfig(customPath) {
     const filePath = customPath || CONFIG_FILE;
@@ -377,7 +377,7 @@ function executeConfigCommand(action, key, value) {
     const currentConfig = loadConfig();
 
     if (!action || action === 'list') {
-        console.log('⚙️ Nirium CLI Configuration:');
+        console.log('⚙️ Veyra CLI Configuration:');
         console.log(`   secretKey:          ${maskSecret(currentConfig.secretKey)}`);
         console.log(`   payTo:              ${currentConfig.payTo || '(not set)'}`);
         console.log(`   network:            ${currentConfig.network || '(default: stellar:testnet)'}`);
@@ -387,7 +387,7 @@ function executeConfigCommand(action, key, value) {
 
     if (action === 'get') {
         if (!key) {
-            console.error('❌ Error: Please specify a configuration key (e.g. `nirium config get secretKey`)');
+            console.error('❌ Error: Please specify a configuration key (e.g. `veyra config get secretKey`)');
             process.exit(1);
         }
         const val = currentConfig[key];
@@ -401,7 +401,7 @@ function executeConfigCommand(action, key, value) {
 
     if (action === 'set') {
         if (!key || value === undefined) {
-            console.error('❌ Error: Usage: `nirium config set <key> <value>` (e.g., `nirium config set secretKey S...`)');
+            console.error('❌ Error: Usage: `veyra config set <key> <value>` (e.g., `veyra config set secretKey S...`)');
             process.exit(1);
         }
         const updatedConfig = { ...currentConfig, [key]: value };
@@ -431,15 +431,15 @@ function executeConfigCommand(action, key, value) {
 
 async function executePayCommand(url, options) {
     const config = loadConfig(options.config);
-    const secretKey = options.secret || process.env.NIRIUM_SECRET_KEY || config.secretKey;
-    const network = options.network || process.env.NIRIUM_NETWORK || config.network || 'stellar:testnet';
+    const secretKey = options.secret || process.env.VEYRA_SECRET_KEY || config.secretKey;
+    const network = options.network || process.env.VEYRA_NETWORK || config.network || 'stellar:testnet';
 
     if (!secretKey) {
         const errorMsg = 'Missing secret key for x402 payment authorization.\n'
             + 'Please provide a secret key using:\n'
             + '  - `--secret S...` option\n'
-            + '  - `NIRIUM_SECRET_KEY` environment variable\n'
-            + '  - `nirium config set secretKey S...`';
+            + '  - `VEYRA_SECRET_KEY` environment variable\n'
+            + '  - `veyra config set secretKey S...`';
         if (options.json) {
             console.log(JSON.stringify({ status: 'error', error: errorMsg }));
             process.exit(1);
@@ -471,13 +471,13 @@ async function executePayCommand(url, options) {
     }
 
     try {
-        const agent = new NiriumAgent({ apiKey: 'nirium-cli-pay' });
+        const agent = new VeyraAgent({ apiKey: 'veyra-cli-pay' });
         agent.initX402({ secretKey, network });
 
         const startTime = Date.now();
         const response = await agent.x402Fetch(url, {
             method: 'GET',
-            headers: { 'User-Agent': 'Nirium-CLI-Pay/1.0' },
+            headers: { 'User-Agent': 'Veyra-CLI-Pay/1.0' },
         });
         const durationMs = Date.now() - startTime;
 
@@ -551,10 +551,10 @@ async function executePayCommand(url, options) {
 
 async function executeServeCommand(options) {
     const config = loadConfig(options.config);
-    const payTo = options.payTo || process.env.NIRIUM_PAY_TO || config.payTo;
+    const payTo = options.payTo || process.env.VEYRA_PAY_TO || config.payTo;
     const price = options.price || '$0.02';
     const port = Number(options.port || process.env.PORT || 3000);
-    const network = options.network || process.env.NIRIUM_NETWORK || config.network || 'stellar:testnet';
+    const network = options.network || process.env.VEYRA_NETWORK || config.network || 'stellar:testnet';
     const routePath = options.route || '/api/v1/data';
     const facilitatorApiKey = options.apiKey || process.env.FACILITATOR_API_KEY || config.facilitatorApiKey;
 
@@ -562,7 +562,7 @@ async function executeServeCommand(options) {
         console.error('❌ Error: Missing facilitator API key.');
         console.error('Get a free key at https://channels.openzeppelin.com/testnet/gen (testnet)');
         console.error('or https://channels.openzeppelin.com/gen (mainnet), then pass it via');
-        console.error('--api-key, FACILITATOR_API_KEY, or `nirium config set facilitatorApiKey ...`');
+        console.error('--api-key, FACILITATOR_API_KEY, or `veyra config set facilitatorApiKey ...`');
         process.exit(1);
     }
     if (!payTo) {
@@ -579,7 +579,7 @@ async function executeServeCommand(options) {
         network,
         facilitatorApiKey,
         routes: {
-            [`GET ${routePath}`]: { price, description: 'Nirium CLI x402 Demo Endpoint' },
+            [`GET ${routePath}`]: { price, description: 'Veyra CLI x402 Demo Endpoint' },
         },
     });
     app.use(middleware);
@@ -598,13 +598,13 @@ async function executeServeCommand(options) {
 
     return new Promise((resolve, reject) => {
         const server = app.listen(port, () => {
-            console.log(`\n🚀 Nirium x402 Demo Server Listening on http://localhost:${port}`);
+            console.log(`\n🚀 Veyra x402 Demo Server Listening on http://localhost:${port}`);
             console.log(`   Protected Route: http://localhost:${port}${routePath}`);
             console.log(`   Price:           ${price}`);
             console.log(`   Pay To:          ${payTo}`);
             console.log(`   Network:         ${network}\n`);
             console.log(`💡 Test this server using:`);
-            console.log(`   nirium pay http://localhost:${port}${routePath} --secret S...\n`);
+            console.log(`   veyra pay http://localhost:${port}${routePath} --secret S...\n`);
             resolve({ app, server });
         });
         server.on('error', (err) => {
@@ -662,7 +662,7 @@ async function runDoctorDiagnostics(options) {
     const checks = [];
 
     // Check 1: payTo address
-    const payTo = getEnv('STELLAR_PAY_TO') || getEnv('PAY_TO') || getEnv('NIRIUM_X402_PAY_TO') || getEnv('STELLAR_PAYTO');
+    const payTo = getEnv('STELLAR_PAY_TO') || getEnv('PAY_TO') || getEnv('VEYRA_X402_PAY_TO') || getEnv('STELLAR_PAYTO');
     if (!payTo) {
         checks.push({
             name: 'payTo', status: 'fail', message: 'payTo address is missing',
@@ -766,7 +766,7 @@ async function runDoctorDiagnostics(options) {
     }
 
     // Check 4: Secret Key check (if configured)
-    const secretKey = getEnv('STELLAR_SECRET_KEY') || getEnv('SECRET_KEY') || getEnv('NIRIUM_SECRET_KEY');
+    const secretKey = getEnv('STELLAR_SECRET_KEY') || getEnv('SECRET_KEY') || getEnv('VEYRA_SECRET_KEY');
     if (secretKey) {
         if (!/^S[A-Z2-7]{55}$/.test(secretKey)) {
             checks.push({
@@ -803,7 +803,7 @@ async function runDoctorDiagnostics(options) {
 
 function formatDoctorOutput(report) {
     const lines = [];
-    lines.push(`🩺 Nirium Doctor — x402/MPP Diagnostic Report`);
+    lines.push(`🩺 Veyra Doctor — x402/MPP Diagnostic Report`);
     lines.push(`Target Network: ${report.network}`);
     lines.push(`Timestamp:      ${report.timestamp}`);
     lines.push(`--------------------------------------------------`);
@@ -860,11 +860,11 @@ function verifyAuditDocument(doc, cid) {
         signerKey = doc.agent.key;
         agentId = doc.agent.id;
         // Always recompute — never trust the document's own statement field.
-        // The protocol signs `nirium-audit-v1:<content_sha256>`, derived
+        // The protocol signs `veyra-audit-v1:<content_sha256>`, derived
         // exclusively from the record hash. Trusting doc.agent.statement
         // would let an attacker reuse a valid signature after swapping the
         // record content.
-        statement = `nirium-audit-v1:${computedHash}`;
+        statement = `veyra-audit-v1:${computedHash}`;
         declaredStatement = doc.agent.statement;
         signatureStatus = verifyEd25519Signature(signerKey, statement, doc.agent.signature) ? 'valid' : 'invalid';
     }
@@ -889,7 +889,7 @@ async function fetchAndVerifyCid(cid, gatewayUrl = 'https://gateway.pinata.cloud
 
 function formatVerifyOutput(result) {
     const lines = [];
-    lines.push(`🔍 Nirium Audit Verifier`);
+    lines.push(`🔍 Veyra Audit Verifier`);
     if (result.cid) lines.push(`CID:            ${result.cid}`);
     lines.push(`--------------------------------------------------`);
     lines.push(result.hashMatch

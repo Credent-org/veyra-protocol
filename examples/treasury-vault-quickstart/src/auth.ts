@@ -9,7 +9,7 @@
  * to the agent — the published Agent client only sets `x-api-key`.
  */
 export async function resolveApiKey(baseUrl: string, address: string): Promise<string> {
-    const fromEnv = process.env.NIRIUM_API_KEY?.trim();
+    const fromEnv = process.env.VEYRA_API_KEY?.trim();
     if (fromEnv) return fromEnv;
 
     const response = await fetch(`${baseUrl}/api/public/demo-auth`, {
@@ -20,7 +20,7 @@ export async function resolveApiKey(baseUrl: string, address: string): Promise<s
     const body = await response.text();
     if (!response.ok) {
         throw new Error(
-            `demo-auth failed (${response.status}). Set NIRIUM_API_KEY or retry.\n${body}`,
+            `demo-auth failed (${response.status}). Set VEYRA_API_KEY or retry.\n${body}`,
         );
     }
 

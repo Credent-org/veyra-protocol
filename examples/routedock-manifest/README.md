@@ -1,41 +1,41 @@
-# RouteDock manifest for Nirium's x402 signals endpoint
+# RouteDock manifest for Veyra's x402 signals endpoint
 
 Serves a signed [RouteDock](https://github.com/winsznx/routedock) discovery
-manifest (`GET /.well-known/routedock.json`) for Nirium's real x402 endpoint:
+manifest (`GET /.well-known/routedock.json`) for Veyra's real x402 endpoint:
 
 ```
-GET https://nirium-agent.fly.dev/api/v1/premium/signals   ($0.02 USDC, Stellar testnet)
+GET https://veyra-agent.fly.dev/api/v1/premium/signals   ($0.02 USDC, Stellar testnet)
 ```
 
 With this manifest served on the same origin, a RouteDock client needs zero
-Nirium-specific code — `client.pay('https://nirium-agent.fly.dev/api/v1/premium/signals')`
+Veyra-specific code — `client.pay('https://veyra-agent.fly.dev/api/v1/premium/signals')`
 auto-discovers the manifest, sees `modes: ["x402"]`, and pays it.
 
 ## This is discovery only — `x402Serve()` is unmodified
 
 [`src/server.ts`](src/server.ts) mounts two independent things:
 
-1. `x402Serve()` from the `nirium` package, imported and called exactly as
+1. `x402Serve()` from the `veyra` package, imported and called exactly as
    documented in `packages/sdk/src/index.ts` — unmodified, still the thing
    that verifies and settles every payment.
 2. `GET /.well-known/routedock.json` — a read-only route that *describes*
    endpoint (1). It never touches payment verification or settlement.
 
 Both routes are signed by / paid to the same account. On the real deployment
-that account is Nirium's production payee; here it's whichever secret
-`NIRIUM_ROUTEDOCK_PAYEE_SECRET` points at.
+that account is Veyra's production payee; here it's whichever secret
+`VEYRA_ROUTEDOCK_PAYEE_SECRET` points at.
 
 ## Manifest field provenance
 
-Every field in [`src/manifest.ts`](src/manifest.ts) is sourced from Nirium's
+Every field in [`src/manifest.ts`](src/manifest.ts) is sourced from Veyra's
 or RouteDock's own real code/config, not guessed:
 
 | Field | Source |
 | --- | --- |
 | `pricing.x402.facilitator` | `X402_FACILITATORS` in `packages/sdk/src/index.ts` (`x402Serve()`'s own default) |
 | `asset_contract` | `USDC_TESTNET_ADDRESS` / `USDC_PUBNET_ADDRESS` exported by `@x402/stellar` — the same library `x402Serve()` loads at runtime |
-| `endpoints.signals.path`, `pricing.x402.amount` | `examples/nextjs-x402/app/api/premium/signals/route.ts` (`$0.02`, `/api/v1/premium/signals`) — confirmed live: a probe of `GET https://nirium-agent.fly.dev/api/v1/premium/signals` returns a real `402` whose `payment-required` header decodes to `amount: "200000"` (0.02 USDC, 7dp) on the exact same asset contract above |
-| `payee` | `x402Serve()`'s `payTo` config — read from `NIRIUM_ROUTEDOCK_PAYEE_SECRET` at startup, never hardcoded |
+| `endpoints.signals.path`, `pricing.x402.amount` | `examples/nextjs-x402/app/api/premium/signals/route.ts` (`$0.02`, `/api/v1/premium/signals`) — confirmed live: a probe of `GET https://veyra-agent.fly.dev/api/v1/premium/signals` returns a real `402` whose `payment-required` header decodes to `amount: "200000"` (0.02 USDC, 7dp) on the exact same asset contract above |
+| `payee` | `x402Serve()`'s `payTo` config — read from `VEYRA_ROUTEDOCK_PAYEE_SECRET` at startup, never hardcoded |
 
 ## Setup
 
@@ -59,14 +59,14 @@ mode/pricing resolution (`RouteDockClient.estimateCost`).
 `RouteDockClient.pay()`'s x402 path builds a Soroban `invoke_contract`
 transaction that RouteDock's own client simulates against a live Soroban RPC
 endpoint before signing — there's no seam to mock that without reimplementing
-Soroban RPC, and Nirium's own `x402serve-smoke.test.ts` draws the same line
+Soroban RPC, and Veyra's own `x402serve-smoke.test.ts` draws the same line
 (mocking the chain-signing modules rather than exercising them). So `pay()`
 itself is proven for real, against real Stellar testnet, below.
 
 ## Real testnet run (not this endpoint's production key — see "Scope" below)
 
 ```bash
-node -e "console.log(require('@stellar/stellar-sdk').Keypair.random().secret())"   # → NIRIUM_ROUTEDOCK_PAYEE_SECRET
+node -e "console.log(require('@stellar/stellar-sdk').Keypair.random().secret())"   # → VEYRA_ROUTEDOCK_PAYEE_SECRET
 node -e "console.log(require('@stellar/stellar-sdk').Keypair.random().secret())"   # → BUYER_SECRET
 ```
 
@@ -102,23 +102,23 @@ vendored client — see "Patches on top of the verbatim copy" in
 header name and cannot complete a payment against any standard
 `@x402/core`-based server (including this one) without it.
 
-## Scope: what a Nirium maintainer still needs to do
+## Scope: what a Veyra maintainer still needs to do
 
 RouteDock requires the manifest to be signed by the account that actually
 receives the money (`sign.ts`'s trust model) — an external contributor can't
 hold that key. Everything in this PR runs against a demo payee I generated
 myself; the code is otherwise byte-for-byte what production needs. To go
-live on `nirium-agent.fly.dev`, a maintainer:
+live on `veyra-agent.fly.dev`, a maintainer:
 
 1. Mounts `GET /.well-known/routedock.json` (this package's route) on the
    existing service, next to the unmodified `x402Serve()` call.
-2. Sets `NIRIUM_ROUTEDOCK_PAYEE_SECRET` to the same secret already configured
-   as `x402Serve()`'s `payTo` account (`NIRIUM_X402_PAY_TO`'s keypair).
+2. Sets `VEYRA_ROUTEDOCK_PAYEE_SECRET` to the same secret already configured
+   as `x402Serve()`'s `payTo` account (`VEYRA_X402_PAY_TO`'s keypair).
 
 No other change to the live endpoint is required or made.
 
 ## Out of scope
 
-- `mpp-charge` / `mpp-session` modes for Nirium (not implemented here).
+- `mpp-charge` / `mpp-session` modes for Veyra (not implemented here).
 - Mainnet (this targets testnet per the issue; `network: 'mainnet'` is
   supported by `buildSignalsManifest()` but not exercised).

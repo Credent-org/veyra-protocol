@@ -1,9 +1,9 @@
-import { ResilientSignalClient, Signal } from 'nirium';
+import { ResilientSignalClient, Signal } from 'veyra';
 
-const WS_URL = process.env.NIRIUM_WS_URL || 'wss://nirium-agent.fly.dev/ws/signals';
-const JWT_TOKEN = process.env.NIRIUM_JWT_TOKEN || '';
+const WS_URL = process.env.VEYRA_WS_URL || 'wss://veyra-agent.fly.dev/ws/signals';
+const JWT_TOKEN = process.env.VEYRA_JWT_TOKEN || '';
 
-console.log('⚡ Resilient Nirium Signals Client Example');
+console.log('⚡ Resilient Veyra Signals Client Example');
 console.log(`Target WebSocket: ${WS_URL}`);
 console.log('Connecting...\n');
 
@@ -15,8 +15,8 @@ const client = new ResilientSignalClient({
   maxReconnectAttempts: 10,
   onTokenRefresh: async () => {
     // Hook for fetching a fresh JWT before reconnecting
-    if (process.env.NIRIUM_JWT_REFRESH_URL) {
-      const res = await fetch(process.env.NIRIUM_JWT_REFRESH_URL);
+    if (process.env.VEYRA_JWT_REFRESH_URL) {
+      const res = await fetch(process.env.VEYRA_JWT_REFRESH_URL);
       const data = await res.json() as { token: string };
       return data.token;
     }

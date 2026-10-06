@@ -2,7 +2,7 @@ import asyncio
 import json
 import pytest
 import websockets
-from nirium import Agent, WebSocketMaxRetriesExceeded, WebSocketStatus
+from veyra import Agent, WebSocketMaxRetriesExceeded, WebSocketStatus
 
 
 @pytest.mark.asyncio

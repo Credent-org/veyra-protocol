@@ -1,4 +1,4 @@
-"""LangChain tool that wraps the existing Nirium x402 client.
+"""LangChain tool that wraps the existing Veyra x402 client.
 
 The Stellar secret is used only to initialize ``Agent.init_x402``. It is never
 stored on the tool, never included in the schema the model sees, and is stripped
@@ -25,25 +25,25 @@ try:
     from langchain_core.tools import BaseTool, ToolException
 except ImportError as exc:  # pragma: no cover - exercised by an explicit test
     raise ImportError(
-        "NiriumX402Tool requires the optional LangChain extra. "
-        "Install with: pip install 'nirium[langchain]'"
+        "VeyraX402Tool requires the optional LangChain extra. "
+        "Install with: pip install 'veyra[langchain]'"
     ) from exc
 
 
-DEFAULT_TOOL_NAME = "nirium_x402_fetch"
+DEFAULT_TOOL_NAME = "veyra_x402_fetch"
 DEFAULT_TOOL_DESCRIPTION = (
-    "Call an HTTP endpoint protected by Nirium x402 on Stellar. "
+    "Call an HTTP endpoint protected by Veyra x402 on Stellar. "
     "The tool completes the HTTP 402 payment flow and returns the response body. "
     "Provide the absolute URL, an optional HTTP method, and an optional JSON body. "
-    "Use this when the user asks for a paid Nirium or x402-protected resource."
+    "Use this when the user asks for a paid Veyra or x402-protected resource."
 )
 
 _ENV_SECRET_KEYS = (
     "STELLAR_SECRET_KEY",
     "STELLAR_TESTNET_SECRET_KEY",
-    "NIRIUM_STELLAR_SECRET",
+    "VEYRA_STELLAR_SECRET",
 )
-_ENV_NETWORK_KEYS = ("NIRIUM_X402_NETWORK", "STELLAR_NETWORK")
+_ENV_NETWORK_KEYS = ("VEYRA_X402_NETWORK", "STELLAR_NETWORK")
 _ALLOWED_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"}
 
 # Stellar secret seeds are 56-character base32 strings starting with S.
@@ -133,7 +133,7 @@ def _parse_body(body: Optional[str]) -> Optional[Any]:
         return body
 
 
-class NiriumX402Input(BaseModel):
+class VeyraX402Input(BaseModel):
     """Arguments exposed to LangChain agent executors."""
 
     url: str = Field(description="Absolute HTTP URL of the x402-protected resource.")
@@ -147,12 +147,12 @@ class NiriumX402Input(BaseModel):
     )
 
 
-class NiriumX402Tool(BaseTool):
+class VeyraX402Tool(BaseTool):
     """LangChain ``BaseTool`` that pays an x402 endpoint via ``Agent.x402_fetch``."""
 
     name: str = DEFAULT_TOOL_NAME
     description: str = DEFAULT_TOOL_DESCRIPTION
-    args_schema: Type[BaseModel] = NiriumX402Input
+    args_schema: Type[BaseModel] = VeyraX402Input
 
     _client: Agent = PrivateAttr()
     _network: str = PrivateAttr(default="stellar:testnet")
@@ -172,7 +172,7 @@ class NiriumX402Tool(BaseTool):
         resolved_network = normalize_network(
             network or _first_env(*_ENV_NETWORK_KEYS) or "stellar:testnet"
         )
-        resolved_rpc = rpc_url or os.environ.get("NIRIUM_X402_RPC_URL") or ""
+        resolved_rpc = rpc_url or os.environ.get("VEYRA_X402_RPC_URL") or ""
         self._network = resolved_network
 
         if agent is not None:
@@ -185,12 +185,12 @@ class NiriumX402Tool(BaseTool):
                 "A Stellar secret is required to pay x402 endpoints. "
                 "Pass secret_key=... or set STELLAR_SECRET_KEY."
             )
-        client = Agent(api_url=api_url or "https://nirium-agent.fly.dev")
+        client = Agent(api_url=api_url or "https://veyra-agent.fly.dev")
         client.init_x402(resolved_secret, network=resolved_network, rpc_url=resolved_rpc)
         self._client = client
 
     def __repr__(self) -> str:
-        return f"NiriumX402Tool(name={self.name!r}, network={self._network!r})"
+        return f"VeyraX402Tool(name={self.name!r}, network={self._network!r})"
 
     @property
     def last_settlement(self) -> Optional[dict[str, Any]]:
@@ -260,16 +260,16 @@ class NiriumX402Tool(BaseTool):
             raise ToolException(_safe_tool_error(exc)) from None
 
 
-def create_nirium_x402_tool(
+def create_veyra_x402_tool(
     secret_key: Optional[str] = None,
     network: Optional[str] = None,
     rpc_url: Optional[str] = None,
     agent: Optional[Agent] = None,
     api_url: Optional[str] = None,
     **kwargs: Any,
-) -> NiriumX402Tool:
-    """Factory that returns a ready-to-bind ``NiriumX402Tool``."""
-    return NiriumX402Tool(
+) -> VeyraX402Tool:
+    """Factory that returns a ready-to-bind ``VeyraX402Tool``."""
+    return VeyraX402Tool(
         secret_key=secret_key,
         network=network,
         rpc_url=rpc_url,

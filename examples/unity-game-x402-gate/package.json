@@ -1,9 +1,9 @@
 {
-  "name": "nirium-unity-game-x402-gate-example",
+  "name": "veyra-unity-game-x402-gate-example",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Reference pattern: gate a Unity game action behind x402 pay-per-action using nirium's x402Serve(), signed from a Stellar Unity Developer Kit (SUDK) client.",
+  "description": "Reference pattern: gate a Unity game action behind x402 pay-per-action using veyra's x402Serve(), signed from a Stellar Unity Developer Kit (SUDK) client.",
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
@@ -19,7 +19,7 @@
     "@x402/stellar": "^2.24.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "nirium": "^0.12.0"
+    "veyra": "^0.12.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

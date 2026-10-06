@@ -1,24 +1,24 @@
 {
-  "name": "nirium-mcp",
+  "name": "veyra-mcp",
   "version": "0.6.0",
-  "description": "Model Context Protocol server for Nirium — exposes market data, autonomous loop control, and x402/MPP paid signals to any MCP-compatible AI (Claude, GPT, Cursor, VS Code Copilot).",
+  "description": "Model Context Protocol server for Veyra — exposes market data, autonomous loop control, and x402/MPP paid signals to any MCP-compatible AI (Claude, GPT, Cursor, VS Code Copilot).",
   "main": "dist/index.js",
   "bin": {
-    "nirium-mcp": "dist/index.js"
+    "veyra-mcp": "dist/index.js"
   },
-  "homepage": "https://nirium.xyz",
+  "homepage": "https://veyra.xyz",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nirium-protocol/nirium-sdk.git"
+    "url": "git+https://github.com/veyra-protocol/veyra-sdk.git"
   },
   "bugs": {
-    "url": "https://github.com/nirium-protocol/nirium-sdk/issues",
-    "email": "niriumprotocol@gmail.com"
+    "url": "https://github.com/veyra-protocol/veyra-sdk/issues",
+    "email": "veyraprotocol@gmail.com"
   },
   "author": {
-    "name": "Nirium Protocol",
-    "email": "niriumprotocol@gmail.com",
-    "url": "https://nirium.xyz"
+    "name": "Veyra Protocol",
+    "email": "veyraprotocol@gmail.com",
+    "url": "https://veyra.xyz"
   },
   "files": [
     "dist",
@@ -45,7 +45,7 @@
     "typescript": "^5.7.0"
   },
   "keywords": [
-    "nirium",
+    "veyra",
     "mcp",
     "model-context-protocol",
     "stellar",

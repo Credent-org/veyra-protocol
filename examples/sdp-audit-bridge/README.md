@@ -1,7 +1,7 @@
 # SDP Audit Bridge
 
 A reusable, read-only TypeScript adapter that turns a completed Stellar
-disbursement batch into a small Nirium audit record. It resolves the actual
+disbursement batch into a small Veyra audit record. It resolves the actual
 payment operations from Horizon, aggregates them without anchoring recipient
 addresses, and calls `anchorAuditRecord({ record, agent })`. A separate command
 starts with only the resulting CID and independently rebuilds the aggregate
@@ -16,7 +16,7 @@ payments, reads an SDP database, or takes custody of funds.
 - A completed batch identified by transaction hashes or a distribution account
   and UTC time window
 - Testnet only
-- A Nirium API key if the configured Audit Trail node requires one
+- A Veyra API key if the configured Audit Trail node requires one
 - An optional, dedicated Stellar Ed25519 secret key for agent attestation
 
 Install the example independently, like the other integrations in this
@@ -57,7 +57,7 @@ not treated as proof of the network.
 If `AUDIT_AGENT_SECRET_KEY` is configured, the bridge signs exactly:
 
 ```text
-nirium-audit-v1:<sha256(JSON.stringify(record))>
+veyra-audit-v1:<sha256(JSON.stringify(record))>
 ```
 
 The secret is only an audit attestation key. Do not reuse an SDP distribution
@@ -70,11 +70,11 @@ and verification reports the signature as `absent`.
 npm run verify -- QmPBR9r3ax7u9smk6H7w7AjSciNh2AZKHwUB5sTyxwCSQD
 ```
 
-The verification command does not ask Nirium for the original batch. It:
+The verification command does not ask Veyra for the original batch. It:
 
 1. fetches the audit document from the configured IPFS gateway;
 2. recomputes SHA-256 over the embedded `record`;
-3. reconstructs `nirium-audit-v1:<computed hash>` and verifies the optional
+3. reconstructs `veyra-audit-v1:<computed hash>` and verifies the optional
    Ed25519 signature without trusting the document's `agent.statement`;
 4. confirms that the configured Horizon server is Testnet;
 5. fetches every cited transaction and its payment records from Horizon;
@@ -93,7 +93,7 @@ The anchored record has one versioned shape:
 
 ```json
 {
-  "schema": "nirium.sdp-audit.v1",
+  "schema": "veyra.sdp-audit.v1",
   "network": "testnet",
   "selection": { "type": "tx_hashes" },
   "recipientCount": 3,
@@ -123,7 +123,7 @@ The anchored record has one versioned shape:
   channel account as the transaction envelope source while the payment operation
   originates from its distribution account.
 
-Nirium caps the embedded record at 8 KiB. The bridge measures the exact UTF-8
+Veyra caps the embedded record at 8 KiB. The bridge measures the exact UTF-8
 serialization before signing or anchoring and asks the caller to narrow or split
 an oversized batch manually. It does not introduce chunking, Merkle trees or
 multiple-CID manifests beyond this issue's one-record scope.
@@ -221,8 +221,8 @@ Tests use deterministic Horizon/IPFS fixtures and cover pagination, rate limits,
 network mismatch, failed transactions, exact arithmetic, duplicate hashes,
 mixed assets, multi-transfer SAC payments, muxed recipients, the 8 KiB cap,
 content tampering,
-forged signatures and the statement-substitution regression fixed by Nirium
-[PR #60](https://github.com/nirium-protocol/nirium/pull/60).
+forged signatures and the statement-substitution regression fixed by Veyra
+[PR #60](https://github.com/veyra-protocol/veyra/pull/60).
 
 ## Official technical references
 

@@ -1,4 +1,4 @@
-@nirium/verify-audit-cid-action
+@veyra/verify-audit-cid-action
 Apache-2.0
 
 @noble/curves

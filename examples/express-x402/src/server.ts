@@ -1,4 +1,4 @@
-﻿import 'dotenv/config'
+import 'dotenv/config'
 
 import express from 'express'
 import { HTTPFacilitatorClient } from '@x402/core/http'
@@ -28,9 +28,9 @@ const routes: RoutesConfig = {
       payTo: sellerAddress,
       price,
     },
-    description: 'Nirium x402-protected market summary example',
+    description: 'Veyra x402-protected market summary example',
     mimeType: 'application/json',
-    serviceName: 'Nirium Express x402 example',
+    serviceName: 'Veyra Express x402 example',
   },
 }
 
@@ -42,7 +42,7 @@ const app = express()
 app.use(express.json())
 
 app.get('/health', (_req, res) => {
-  res.json({ ok: true, service: 'nirium-express-x402-example' })
+  res.json({ ok: true, service: 'veyra-express-x402-example' })
 })
 
 app.use(
@@ -50,7 +50,7 @@ app.use(
     routes,
     facilitator,
     [{ network, server: new ExactStellarScheme() }],
-    { appName: 'Nirium Express x402 example', testnet: network === 'stellar:testnet' },
+    { appName: 'Veyra Express x402 example', testnet: network === 'stellar:testnet' },
     undefined,
     false
   )
@@ -61,7 +61,7 @@ app.get(paidRoute, (_req, res) => {
     ok: true,
     route: paidRoute,
     network,
-    message: 'Payment accepted. This is the protected Nirium market summary response.',
+    message: 'Payment accepted. This is the protected Veyra market summary response.',
     summary: {
       asset: 'USDC',
       rails: ['x402', 'Stellar testnet'],
@@ -71,7 +71,7 @@ app.get(paidRoute, (_req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Nirium x402 Express example listening on http://localhost:${port}`)
+  console.log(`Veyra x402 Express example listening on http://localhost:${port}`)
   console.log(`Paid route: http://localhost:${port}${paidRoute}`)
 })
 

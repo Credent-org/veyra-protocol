@@ -1,4 +1,4 @@
-# Nirium — 10 minutes for a reviewer
+# Veyra — 10 minutes for a reviewer
 
 Not a Claude Code session, not a deep dive. Five things, in order of how much
 you have to trust us to believe them. Every link below is something you can
@@ -7,7 +7,7 @@ check yourself right now — none of it depends on taking our word for it.
 ## 1. Something live, in 30 seconds
 
 ```bash
-curl https://nirium-agent.fly.dev/api/nodes
+curl https://veyra-agent.fly.dev/api/nodes
 ```
 
 Real JSON, no auth, right now: the live status of every execution node
@@ -17,7 +17,7 @@ project actually is — not a pitch deck, a running API you just hit.
 
 ## 2. Treasury Node — real money, on mainnet, with a contract that can't take it
 
-Nirium doesn't hold the vault. It holds the `RebalanceManager` role of a
+Veyra doesn't hold the vault. It holds the `RebalanceManager` role of a
 [DeFindex](https://defindex.io) vault the client owns, and DeFindex's own
 `rebalance()` function never takes a destination address — withdrawal isn't
 forbidden, it's inexpressible in the contract. That's not our framing; it's
@@ -33,20 +33,20 @@ The underlying vault strategy (Etherfuse CETES on Blend v2) was audited by
 OtterSec, March 2025 — 16 findings, all 13 vulnerabilities resolved. Full
 writeup with the same links: [this repo's own README, "Networks"
 section](../README.md#networks), and the identical evidence is
-cross-referenced in the full [Eras256/Nirium
-mirror](https://github.com/Eras256/Nirium) — two independent places
+cross-referenced in the full [Eras256/Veyra
+mirror](https://github.com/Eras256/Veyra) — two independent places
 citing the same verifiable transactions, not two different claims.
 
 ## 3. A real partner integration, not a listed logo
 
-[`nirium-pollar-adapter`](https://github.com/nirium-protocol/nirium-pollar-adapter)
+[`veyra-pollar-adapter`](https://github.com/veyra-protocol/veyra-pollar-adapter)
 lets a wallet onboarded through [Pollar](https://pollar.xyz) (social login,
 zero seed phrase) pay for x402 APIs and sign audit records without touching
 a raw Stellar key. Two concrete artifacts:
 
-- **Merged, not just proposed**: [nirium-pollar-adapter PR #1](https://github.com/nirium-protocol/nirium-pollar-adapter/pull/1) (deferred-mode wallet funding) merged 29 Aug 2026.
-- **Live demo**: [nirium-pollar-x402-demo.vercel.app](https://nirium-pollar-x402-demo.vercel.app) — log in with Google, pay a real x402 endpoint, holding zero XLM end to end.
-- **Two real mainnet transactions**, not just a working demo: a payment [`25ebaf9a…`](https://stellar.expert/explorer/public/tx/25ebaf9aa7e72c1c3edcc43a1c18aaa102c12eee42c57e02fed4fda79af6605d) settled 27 Jul 2026 (evidence anchored at [`QmZiwxidm…`](https://gateway.pinata.cloud/ipfs/QmZiwxidm7pcTqNufxzFyUc7qJrCRN2TKRNwcXkg7vUUwR)), and a user who signed in with Google paying $0.02 USDC on mainnet, [`e4fa3df9…`](https://stellar.expert/explorer/public/tx/e4fa3df9cb225a4d7f64dd0082eb38218ada4b4af3378f288989a5d4b1116ed9), holding zero XLM throughout. Both detailed in [nirium-pollar-adapter's own README](https://github.com/nirium-protocol/nirium-pollar-adapter#readme).
+- **Merged, not just proposed**: [veyra-pollar-adapter PR #1](https://github.com/veyra-protocol/veyra-pollar-adapter/pull/1) (deferred-mode wallet funding) merged 29 Aug 2026.
+- **Live demo**: [veyra-pollar-x402-demo.vercel.app](https://veyra-pollar-x402-demo.vercel.app) — log in with Google, pay a real x402 endpoint, holding zero XLM end to end.
+- **Two real mainnet transactions**, not just a working demo: a payment [`25ebaf9a…`](https://stellar.expert/explorer/public/tx/25ebaf9aa7e72c1c3edcc43a1c18aaa102c12eee42c57e02fed4fda79af6605d) settled 27 Jul 2026 (evidence anchored at [`QmZiwxidm…`](https://gateway.pinata.cloud/ipfs/QmZiwxidm7pcTqNufxzFyUc7qJrCRN2TKRNwcXkg7vUUwR)), and a user who signed in with Google paying $0.02 USDC on mainnet, [`e4fa3df9…`](https://stellar.expert/explorer/public/tx/e4fa3df9cb225a4d7f64dd0082eb38218ada4b4af3378f288989a5d4b1116ed9), holding zero XLM throughout. Both detailed in [veyra-pollar-adapter's own README](https://github.com/veyra-protocol/veyra-pollar-adapter#readme).
 
 The demo-app integration itself,
 [pollar-apps#30](https://github.com/pollar-xyz/pollar-apps/pull/30), was
@@ -54,7 +54,7 @@ The demo-app integration itself,
 
 **Another real integration, publicly thanked by the protocol, not just a logo.** [Trustless-Work/agentic-escrow-research](https://github.com/Trustless-Work/agentic-escrow-research): 4 PRs merged on 21-sep-2026 ([#1](https://github.com/Trustless-Work/agentic-escrow-research/pull/1), [#2](https://github.com/Trustless-Work/agentic-escrow-research/pull/2), [#3](https://github.com/Trustless-Work/agentic-escrow-research/pull/3), [#4](https://github.com/Trustless-Work/agentic-escrow-research/pull/4)), thanked by name by Trustless Work's official account.
 
-**A real escrow cycle, liquidated with real money, not a description of one.** Beyond the 4 merged PRs above, Nirium ran Trustless Work's own Multi-Release escrow contract end to end on mainnet, 3-sep-2026: deploy → fund → approve → release, a real 0.50 USDC, self-directed (one key holding every role, proving the mechanism, not a decision to open this flow to Payouts production — that stays behind legal review). Four confirmed transactions, receiver balance moved by exactly 0.4985 USDC (0.50 minus Trustless Work's fixed 0.3% fee): [`4110dd16…12aefe84`](https://stellar.expert/explorer/public/tx/4110dd16df6c7cdaf50d89f7402e3e51de0ac4f63255f6601e800e3912aefe84) → [`7b181a13…451c09c`](https://stellar.expert/explorer/public/tx/7b181a13160d6d7170f78ba9a4e15309cc0a8f6e20a1db01adfcdb667451c09c) → [`a3aa35a2…4096ca5`](https://stellar.expert/explorer/public/tx/a3aa35a272774547d3ca4ce5a32e361641daac6cf829ecf8951b83a194096ca5) → [`0c533088…a8192b`](https://stellar.expert/explorer/public/tx/0c533088ab6326a78b9f79c197b7636ca4662a0d72562968ddea37f370a8192b). Full detail, including the deploy-path timing evidence, in the [Eras256/Nirium mirror's README](https://github.com/Eras256/Nirium#readme).
+**A real escrow cycle, liquidated with real money, not a description of one.** Beyond the 4 merged PRs above, Veyra ran Trustless Work's own Multi-Release escrow contract end to end on mainnet, 3-sep-2026: deploy → fund → approve → release, a real 0.50 USDC, self-directed (one key holding every role, proving the mechanism, not a decision to open this flow to Payouts production — that stays behind legal review). Four confirmed transactions, receiver balance moved by exactly 0.4985 USDC (0.50 minus Trustless Work's fixed 0.3% fee): [`4110dd16…12aefe84`](https://stellar.expert/explorer/public/tx/4110dd16df6c7cdaf50d89f7402e3e51de0ac4f63255f6601e800e3912aefe84) → [`7b181a13…451c09c`](https://stellar.expert/explorer/public/tx/7b181a13160d6d7170f78ba9a4e15309cc0a8f6e20a1db01adfcdb667451c09c) → [`a3aa35a2…4096ca5`](https://stellar.expert/explorer/public/tx/a3aa35a272774547d3ca4ce5a32e361641daac6cf829ecf8951b83a194096ca5) → [`0c533088…a8192b`](https://stellar.expert/explorer/public/tx/0c533088ab6326a78b9f79c197b7636ca4662a0d72562968ddea37f370a8192b). Full detail, including the deploy-path timing evidence, in the [Eras256/Veyra mirror's README](https://github.com/Eras256/Veyra#readme).
 
 ## 4. Upstream contributions — bugs fixed in code we don't control
 
@@ -63,7 +63,7 @@ weren't real, agreeing.
 
 | Where | What | Status |
 |---|---|---|
-| [stellar/stellar-dev-skill#96](https://github.com/stellar/stellar-dev-skill/pull/96) | Nirium listed in Stellar's own official developer-skills catalog | **Merged** 15 Aug 2026, reviewed by SDF DevRel |
+| [stellar/stellar-dev-skill#96](https://github.com/stellar/stellar-dev-skill/pull/96) | Veyra listed in Stellar's own official developer-skills catalog | **Merged** 15 Aug 2026, reviewed by SDF DevRel |
 | [stellar/stellar-dev-skill#97](https://github.com/stellar/stellar-dev-skill/pull/97) | Multiple real production-hardening fixes to the agentic-payments skill (x402/MPP) | **Merged** 5 Sep 2026 |
 | [x402-foundation/x402#3171](https://github.com/x402-foundation/x402/issues/3171) | Filed by us against `@x402/core`'s reference implementation; fixed by an unrelated third-party contributor, not us | **Closed** 17 Aug 2026 — external confirmation, not self-reported |
 | [stellar/js-stellar-sdk#1655](https://github.com/stellar/js-stellar-sdk/issues/1655) | Delegate-signing path (CAP-71) wasn't seeing signers outside the root node | **Closed** 28 Sep 2026 via maintainer's [PR #1747](https://github.com/stellar/js-stellar-sdk/pull/1747) |
@@ -94,7 +94,7 @@ This repo's GrantFox bounty program, all three campaigns to date
 2026), audited issue by issue against real merged PRs, not counted by
 title:
 
-**42 total bounty asks. 20 delivered with a merged PR into `nirium`
+**42 total bounty asks. 20 delivered with a merged PR into `veyra`
 itself. 2 more delivered as real, substantive PRs against external target
 repos, still open there awaiting that project's own maintainer review — not
 yet merged. 4 closed and cleanly recreated as new issues, not abandoned. 16
@@ -103,10 +103,10 @@ closed with no deliverable at all, reported honestly rather than omitted.**
 Verify the raw numbers yourself:
 
 ```bash
-gh issue list --repo nirium-protocol/nirium --label "GrantFox OSS" --state all --limit 200 --json number | jq length
+gh issue list --repo veyra-protocol/veyra --label "GrantFox OSS" --state all --limit 200 --json number | jq length
 ```
 
-Board is fully closed — `gh issue list --repo nirium-protocol/nirium
+Board is fully closed — `gh issue list --repo veyra-protocol/veyra
 --label "GrantFox OSS" --state open --limit 200` returns `[]`. Nothing
 stale left open to re-litigate. **Use `--limit 200`**: `gh issue list`
 defaults to 30 results, which silently truncates this exact count if you

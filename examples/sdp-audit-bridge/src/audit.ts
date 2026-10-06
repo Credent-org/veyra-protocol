@@ -1,5 +1,5 @@
 import { Keypair } from '@stellar/stellar-sdk';
-import { Agent, type AgentAttestationInput } from 'nirium';
+import { Agent, type AgentAttestationInput } from 'veyra';
 import { HorizonReader, type HorizonReaderOptions } from './horizon.js';
 import { fetchJson } from './http.js';
 import {
@@ -11,7 +11,7 @@ import {
   parseAuditRecord,
 } from './record.js';
 
-const DEFAULT_NIRIUM_URL = 'https://nirium-agent.fly.dev';
+const DEFAULT_VEYRA_URL = 'https://veyra-agent.fly.dev';
 const DEFAULT_IPFS_GATEWAY = 'https://gateway.pinata.cloud';
 const AUDIT_DOCUMENT_LIMIT = 64 * 1024;
 const CID_PATTERN = /^[A-Za-z0-9]{20,128}$/;
@@ -29,8 +29,8 @@ export interface CreatedAuditRecord {
 }
 
 export interface AnchorBatchOptions extends CreateAuditRecordOptions {
-  niriumApiUrl?: string;
-  niriumApiKey?: string;
+  veyraApiUrl?: string;
+  veyraApiKey?: string;
   agentSecretKey?: string;
   agentId?: string;
 }
@@ -85,19 +85,19 @@ function asObject(value: unknown, name: string): JsonObject {
   return value as JsonObject;
 }
 
-export function parseNiriumAnchorResponse(value: unknown): ParsedAnchorResponse {
-  const response = asObject(value, 'Nirium anchor response');
+export function parseVeyraAnchorResponse(value: unknown): ParsedAnchorResponse {
+  const response = asObject(value, 'Veyra anchor response');
   const contentSha256 = typeof response.contentSha256 === 'string'
     ? response.contentSha256
     : response.content_sha256;
   if (typeof response.cid !== 'string' || !CID_PATTERN.test(response.cid)) {
-    throw new Error('Nirium anchor response has an invalid CID');
+    throw new Error('Veyra anchor response has an invalid CID');
   }
   if (typeof contentSha256 !== 'string' || !/^[0-9a-fA-F]{64}$/.test(contentSha256)) {
-    throw new Error('Nirium anchor response has an invalid content hash');
+    throw new Error('Veyra anchor response has an invalid content hash');
   }
   if (typeof response.anchoredAt !== 'string') {
-    throw new Error('Nirium anchor response is missing anchoredAt');
+    throw new Error('Veyra anchor response is missing anchoredAt');
   }
   return {
     cid: response.cid,
@@ -157,7 +157,7 @@ function buildAgentAttestation(
   } catch {
     throw new Error('AUDIT_AGENT_SECRET_KEY is not a valid Stellar Ed25519 secret key');
   }
-  const statement = `nirium-audit-v1:${contentSha256}`;
+  const statement = `veyra-audit-v1:${contentSha256}`;
   return {
     key: keypair.publicKey(),
     signature: keypair.sign(Buffer.from(statement, 'utf8')).toString('base64'),
@@ -178,7 +178,7 @@ function verifyAgentAttestation(
   } catch {
     throw new Error('Audit document agent key is not a valid Stellar Ed25519 public key');
   }
-  const statement = `nirium-audit-v1:${contentSha256}`;
+  const statement = `veyra-audit-v1:${contentSha256}`;
   const signature = decodeSignature(agent.signature);
   if (!keypair.verify(Buffer.from(statement, 'utf8'), signature)) {
     throw new Error('Agent signature is invalid for the recomputed audit statement');
@@ -225,17 +225,17 @@ export async function anchorDisbursementBatch(
     ? buildAgentAttestation(created.contentSha256, trimmedSecret, options.agentId)
     : undefined;
   const agent = new Agent({
-    apiKey: options.niriumApiKey ?? '',
-    baseUrl: options.niriumApiUrl ?? DEFAULT_NIRIUM_URL,
+    apiKey: options.veyraApiKey ?? '',
+    baseUrl: options.veyraApiUrl ?? DEFAULT_VEYRA_URL,
   });
   const anchorOptions = {
     record: created.record as unknown as Record<string, unknown>,
     ...(agentAttestation ? { agent: agentAttestation } : {}),
   };
-  const anchored = parseNiriumAnchorResponse(await agent.anchorAuditRecord(anchorOptions));
+  const anchored = parseVeyraAnchorResponse(await agent.anchorAuditRecord(anchorOptions));
   if (anchored.contentSha256 !== created.contentSha256) {
     throw new Error(
-      `Nirium returned content hash ${anchored.contentSha256}, expected ${created.contentSha256}`,
+      `Veyra returned content hash ${anchored.contentSha256}, expected ${created.contentSha256}`,
     );
   }
   return {

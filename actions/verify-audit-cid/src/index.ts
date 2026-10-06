@@ -70,7 +70,7 @@ async function appendFileIfConfigured(envName: string, body: string): Promise<bo
 }
 
 async function setOutput(name: string, value: string): Promise<void> {
-  const delimiter = `nirium_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+  const delimiter = `veyra_${Date.now()}_${Math.random().toString(16).slice(2)}`;
   const output = `${name}<<${delimiter}\n${value}\n${delimiter}\n`;
   const wroteFile = await appendFileIfConfigured('GITHUB_OUTPUT', output);
   if (!wroteFile) {
@@ -110,7 +110,7 @@ function renderSummary(result: VerifyResult): string {
   ];
 
   return [
-    '## Nirium Audit CID Verification',
+    '## Veyra Audit CID Verification',
     '',
     '| Field | Value |',
     '| --- | --- |',

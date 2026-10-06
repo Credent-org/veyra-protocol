@@ -4,7 +4,7 @@ use rust_x402::{X402Client, STELLAR_TESTNET};
 #[tokio::main]
 async fn main() -> rust_x402::Result<()> {
     let url = std::env::var("X402_URL")
-        .unwrap_or_else(|_| "https://nirium-agent.fly.dev/api/v1/premium/signals".to_string());
+        .unwrap_or_else(|_| "https://veyra-agent.fly.dev/api/v1/premium/signals".to_string());
     // Reads STELLAR_SECRET_KEY (and optional STELLAR_RPC_URL) from the env.
     let signer = EnvSigner::from_env()?;
     println!("payer: {}", signer.address());

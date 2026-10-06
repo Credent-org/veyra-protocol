@@ -1,4 +1,4 @@
-import { x402Serve, type X402GuardStore } from "nirium";
+import { x402Serve, type X402GuardStore } from "veyra";
 import { createMemoryX402GuardStore } from "./x402-guard-memory-store.ts";
 
 // One shared store across warm invocations of this module - see the
@@ -26,7 +26,7 @@ export type X402RouteConfig = {
 
 /**
  * Wraps a Next.js App Router Route Handler with real x402 payment protection
- * via Nirium SDK's `x402Serve()` middleware.
+ * via Veyra SDK's `x402Serve()` middleware.
  */
 export function withX402Protection(
   config: X402RouteConfig,

@@ -1,22 +1,22 @@
 # Charge AI Agents in 5 Minutes with x402
 
-This quickstart shows how to call a paid Nirium endpoint from a TypeScript script. The SDK handles the x402 negotiation, Stellar auth-entry signing, and paid retry after the endpoint returns `402 Payment Required`.
+This quickstart shows how to call a paid Veyra endpoint from a TypeScript script. The SDK handles the x402 negotiation, Stellar auth-entry signing, and paid retry after the endpoint returns `402 Payment Required`.
 
 ## What You Need
 
 - Node.js 18 or newer.
 - A funded Stellar testnet secret key. Use a throwaway testnet account only.
-- A clean project where you can install `nirium`.
+- A clean project where you can install `veyra`.
 
 Do not use a mainnet secret key while testing this flow.
 
 ## 1. Create a Script Project
 
 ```bash
-mkdir nirium-x402-demo
-cd nirium-x402-demo
+mkdir veyra-x402-demo
+cd veyra-x402-demo
 npm init -y
-npm install nirium tsx typescript dotenv
+npm install veyra tsx typescript dotenv
 ```
 
 Add a local environment file:
@@ -24,7 +24,7 @@ Add a local environment file:
 ```bash
 cat > .env <<'EOF'
 STELLAR_SECRET_KEY=SXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-NIRIUM_PREMIUM_URL=https://nirium-agent.fly.dev/api/v1/premium/signals
+VEYRA_PREMIUM_URL=https://veyra-agent.fly.dev/api/v1/premium/signals
 EOF
 ```
 
@@ -35,20 +35,20 @@ Replace `STELLAR_SECRET_KEY` with a funded testnet secret key.
 Create `charge-agent.ts`:
 
 ```ts
-import { Agent } from "nirium";
+import { Agent } from "veyra";
 import "dotenv/config";
 
 const secretKey = process.env.STELLAR_SECRET_KEY;
 const premiumUrl =
-  process.env.NIRIUM_PREMIUM_URL ??
-  "https://nirium-agent.fly.dev/api/v1/premium/signals";
+  process.env.VEYRA_PREMIUM_URL ??
+  "https://veyra-agent.fly.dev/api/v1/premium/signals";
 
 if (!secretKey) {
   throw new Error("Set STELLAR_SECRET_KEY in .env before running this script.");
 }
 
 const agent = new Agent({
-  baseUrl: "https://nirium-agent.fly.dev",
+  baseUrl: "https://veyra-agent.fly.dev",
 });
 
 agent.initX402({
@@ -92,7 +92,7 @@ If the response does not include a transaction hash, check the facilitator or se
 The seller controls pricing on the protected endpoint. To charge a different amount, update the server-side x402 payment requirements for the route you expose to agents. Keep these client-side values aligned with that endpoint:
 
 ```bash
-NIRIUM_PREMIUM_URL=https://your-api.example.com/paid/agent-signal
+VEYRA_PREMIUM_URL=https://your-api.example.com/paid/agent-signal
 ```
 
 Then rerun:
@@ -113,10 +113,10 @@ npx tsx charge-agent.ts
 
 ## Python / LangChain
 
-LangChain agents can pay the same endpoint through `NiriumX402Tool`, which wraps `init_x402` / `x402_fetch` and never exposes the Stellar secret to the model:
+LangChain agents can pay the same endpoint through `VeyraX402Tool`, which wraps `init_x402` / `x402_fetch` and never exposes the Stellar secret to the model:
 
 ```bash
-pip install 'nirium[langchain]'
+pip install 'veyra[langchain]'
 ```
 
 See [`examples/langchain-x402-agent`](../examples/langchain-x402-agent) for a runnable ReAct-style agent.

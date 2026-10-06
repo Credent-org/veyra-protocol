@@ -1,4 +1,4 @@
-import { x402Serve } from "nirium";
+import { x402Serve } from "veyra";
 
 export type X402SellerConfig = {
   payTo?: string;
@@ -17,30 +17,30 @@ export type PaidRouteHandler = (
 
 /**
  * Wraps a Next.js App Router Route Handler with real x402 payment protection
- * via Nirium SDK's `x402Serve()` middleware.
+ * via Veyra SDK's `x402Serve()` middleware.
  */
-export function withNiriumX402(
+export function withVeyraX402(
   config: X402SellerConfig,
   handler: PaidRouteHandler,
 ) {
   return async function GET(req: Request): Promise<Response> {
     const payTo =
       config.payTo ||
-      process.env.NIRIUM_X402_PAY_TO ||
+      process.env.VEYRA_X402_PAY_TO ||
       process.env.PAY_TO ||
       process.env.NEXT_PUBLIC_PAY_TO ||
       "";
     const network = (config.network ||
-      process.env.NIRIUM_X402_NETWORK ||
+      process.env.VEYRA_X402_NETWORK ||
       process.env.NETWORK ||
       "stellar:testnet") as "stellar:testnet" | "stellar:pubnet";
     let priceUsdc =
-      config.priceUsdc || process.env.NIRIUM_X402_PRICE_USDC || "$0.02";
+      config.priceUsdc || process.env.VEYRA_X402_PRICE_USDC || "$0.02";
     if (!priceUsdc.startsWith("$")) {
       priceUsdc = `$${priceUsdc}`;
     }
     const description =
-      config.description || "Nirium premium market signals";
+      config.description || "Veyra premium market signals";
     const resource = config.resource || new URL(req.url).pathname;
 
     // Fail loudly on misconfiguration: PAY_TO must be a valid Stellar G-address
@@ -56,12 +56,12 @@ export function withNiriumX402(
 
     const facilitatorUrl =
       config.facilitatorUrl ||
-      process.env.NIRIUM_X402_FACILITATOR_URL ||
+      process.env.VEYRA_X402_FACILITATOR_URL ||
       process.env.FACILITATOR_URL ||
       process.env.X402_FACILITATOR_URL;
     const facilitatorApiKey =
       config.facilitatorApiKey ||
-      process.env.NIRIUM_X402_FACILITATOR_API_KEY ||
+      process.env.VEYRA_X402_FACILITATOR_API_KEY ||
       process.env.FACILITATOR_API_KEY;
 
     // Standard x402 v2 protocol header (PAYMENT-SIGNATURE / payment-signature)
@@ -183,5 +183,5 @@ export function withNiriumX402(
   };
 }
 
-export const withX402Protection = withNiriumX402;
+export const withX402Protection = withVeyraX402;
 export { x402Serve };

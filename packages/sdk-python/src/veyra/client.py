@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════
-# Nirium Python SDK — Official Client (x402 + MPP)
+# Veyra Python SDK — Official Client (x402 + MPP)
 # Versión: solo en pyproject.toml / setup.py / __init__.__version__ (no aquí:
 # un número en un comentario se desincroniza y ya mintió antes).
 # Synced with backend API (real Horizon data, Soroban execution)
@@ -24,7 +24,7 @@ import math as _math
 # re-emite con su propia cuenta y secuencia al pagar el fee de red.
 _X402_NULL_ACCOUNT = "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF"
 
-logger = logging.getLogger("nirium.client")
+logger = logging.getLogger("veyra.client")
 
 
 class WebSocketMaxRetriesExceeded(Exception):
@@ -42,7 +42,7 @@ class WebSocketStatus:
 
 class Agent:
     """
-    Nirium Agent — Full API + WebSocket client for the Nirium autonomous agent.
+    Veyra Agent — Full API + WebSocket client for the Veyra autonomous agent.
 
     Usage:
         agent = Agent(api_url="http://localhost:3001", api_key="nrm_your_key")
@@ -186,7 +186,7 @@ class Agent:
         Strategies: flash-loan-arb, path-arbitrage, cross-dex, blend-yield, soroswap-swap
 
         Args:
-            strategy: Strategy name (maps to a NiriumVault contract function)
+            strategy: Strategy name (maps to a VeyraVault contract function)
             asset: Base asset symbol (e.g. 'XLM')
             params: Optional dict — supports 'amount' in stroops (default 1000)
             stellar_account: Your Stellar wallet address. Required for legal consent verification.
@@ -304,7 +304,7 @@ class Agent:
     # ─── Payouts / Disbursements ─────────────────────────────
     #
     # Non-custodial by construction: the node builds an unsigned XDR, you sign
-    # it with your own wallet and broadcast it via submit_payout. Nirium never
+    # it with your own wallet and broadcast it via submit_payout. Veyra never
     # holds funds and never sees your keys.
     #
     # Licensed for independent service payments only (contractors, freelancers,
@@ -391,7 +391,7 @@ class Agent:
 
         Pass ``agent`` as ``{"key": "G...", "signature": "<base64>", "id": "..."}``
         to attest *who* produced the evidence: sign the exact string
-        ``nirium-audit-v1:<content_sha256>`` with that ed25519 key. An invalid
+        ``veyra-audit-v1:<content_sha256>`` with that ed25519 key. An invalid
         signature is rejected with 400 and nothing is anchored.
         """
         if hash is None and record is None:
@@ -445,7 +445,7 @@ class Agent:
 
     # ─── Treasury (DeFindex) ───────────────────────────────────
     #
-    # Nirium never holds these funds. It holds the RebalanceManager role of a
+    # Veyra never holds these funds. It holds the RebalanceManager role of a
     # DeFindex vault the client deploys and owns — every write below returns
     # an UNSIGNED XDR; you decide whether and when to sign it and call
     # ``submit_treasury_tx``. ``rebalance()`` never takes a destination
@@ -463,7 +463,7 @@ class Agent:
         return await self._get(f"/api/treasury/vault/{vault_id}", params={"holder": holder})
 
     async def get_treasury_vaults(self, manager: Optional[str] = None) -> Dict[str, Any]:
-        """List vaults Nirium has deployed or read, on the current network."""
+        """List vaults Veyra has deployed or read, on the current network."""
         return await self._get("/api/treasury/vaults", params={"manager": manager})
 
     async def get_treasury_strategy_asset(self, strategy_id: str) -> Dict[str, Any]:
@@ -483,7 +483,7 @@ class Agent:
     ) -> Dict[str, Any]:
         """Build an unsigned XDR to deploy a DeFindex vault.
 
-        ``manager`` keeps control (rescue, pause, revoke); Nirium only ever
+        ``manager`` keeps control (rescue, pause, revoke); Veyra only ever
         holds ``rebalance_manager``, which cannot withdraw or change roles.
         ``assets`` is ``[{"address": "C...", "strategies": [{"address": "C...", "name": "..."}]}]``.
         Sign the returned XDR with ``caller`` and submit via
@@ -546,7 +546,7 @@ class Agent:
         """Build an unsigned XDR handing the RebalanceManager role to a new address.
 
         Only the vault's current Manager can sign it — the same door that
-        grants Nirium the role also revokes it.
+        grants Veyra the role also revokes it.
         """
         return await self._post("/api/treasury/set-rebalance-manager", {
             "vault": vault, "manager": manager, "rebalanceManager": rebalance_manager,
@@ -561,7 +561,7 @@ class Agent:
         ``[{"kind": "Unwind" | "Invest", "strategy": "C...", "amount": "1000000"}]``
         — the vault's own strategies only, no other instruction is
         expressible. Sign with the vault's RebalanceManager and submit via
-        ``submit_treasury_tx``. To have Nirium sign with its own key instead,
+        ``submit_treasury_tx``. To have Veyra sign with its own key instead,
         see ``execute_treasury_rebalance``.
         """
         payload: Dict[str, Any] = {"vault": vault, "instructions": instructions}
@@ -579,10 +579,10 @@ class Agent:
         yourself, or an empty ``instructions`` list with a ``reason`` if there's
         nothing to do right now. Public: no allowlist, no invite — works for any
         vault where ``caller`` is already the on-chain rebalanceManager. Unlike
-        ``execute_treasury_rebalance``, Nirium never executes on your behalf here,
+        ``execute_treasury_rebalance``, Veyra never executes on your behalf here,
         so this doesn't wait on the same legal review the fully autonomous path does.
 
-        ``enter_at``/``exit_at`` are your mandate, not a Nirium default. ``min_idle``
+        ``enter_at``/``exit_at`` are your mandate, not a Veyra default. ``min_idle``
         is stroops, as a string or number — omit for no minimum (0).
         """
         payload: Dict[str, Any] = {
@@ -595,7 +595,7 @@ class Agent:
     async def execute_treasury_rebalance(
         self, vault: str, instructions: List[Dict[str, Any]], caller: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Sign and submit a rebalance with Nirium's own RebalanceManager key and wait for confirmation.
+        """Sign and submit a rebalance with Veyra's own RebalanceManager key and wait for confirmation.
 
         Only available where that key actually lives — mainnet's
         receive-only box returns 501 by design, not a broken 500.
@@ -1000,7 +1000,7 @@ class Agent:
                 )
                 async with websockets.connect(url) as ws:
                     self._active_ws = ws
-                    logger.info("Connected to Nirium Signal Stream")
+                    logger.info("Connected to Veyra Signal Stream")
                     await self._emit("status", WebSocketStatus.CONNECTED)
                     await self._emit("connected", None)
 

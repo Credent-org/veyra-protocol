@@ -85,7 +85,7 @@ export class X402Client {
       // PATCHED — not vendored verbatim, see vendor/routedock/PROVENANCE.md.
       // The real @x402/core server (server/index.js: `"PAYMENT-REQUIRED": encodePaymentRequiredHeader(...)`)
       // sets this header as `PAYMENT-REQUIRED`, not `X-Payment-Requirements`.
-      // Confirmed against both a live probe of the real nirium-agent.fly.dev
+      // Confirmed against both a live probe of the real veyra-agent.fly.dev
       // endpoint and a local run of the actual, unmodified x402Serve() in
       // this example — both return `payment-required` (HTTP headers are
       // case-insensitive). RouteDock's original line here reads only

@@ -3,14 +3,14 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "nirium"
+name = "veyra"
 version = "0.11.0"
 description = "Autonomous treasury and agentic-payments infrastructure for Stellar (x402 + MPP) — Python client"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
-authors = [{name = "Nirium Protocol", email = "niriumprotocol@gmail.com"}]
-keywords = ["nirium", "stellar", "soroban", "defi", "agent", "autonomous", "treasury", "x402", "mpp", "agentic-payments", "usdc", "cetes", "etherfuse", "rwa"]
+authors = [{name = "Veyra Protocol", email = "veyraprotocol@gmail.com"}]
+keywords = ["veyra", "stellar", "soroban", "defi", "agent", "autonomous", "treasury", "x402", "mpp", "agentic-payments", "usdc", "cetes", "etherfuse", "rwa"]
 dependencies = [
     "aiohttp>=3.9.0",
     "websockets>=13.0",
@@ -26,10 +26,10 @@ test = [
 ]
 
 [project.urls]
-Homepage = "https://nirium.xyz"
-Repository = "https://github.com/nirium-protocol/nirium-sdk"
-Documentation = "https://nirium.xyz/docs"
-"Bug Tracker" = "https://github.com/nirium-protocol/nirium-sdk/issues"
+Homepage = "https://veyra.xyz"
+Repository = "https://github.com/veyra-protocol/veyra-sdk"
+Documentation = "https://veyra.xyz/docs"
+"Bug Tracker" = "https://github.com/veyra-protocol/veyra-sdk/issues"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

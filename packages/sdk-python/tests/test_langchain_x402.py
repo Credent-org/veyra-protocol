@@ -1,4 +1,4 @@
-"""LangChain-facing tests for NiriumX402Tool.
+"""LangChain-facing tests for VeyraX402Tool.
 
 The underlying x402 client is mocked. These tests assert the tool schema, the
 values returned to an agent, and that secret material never reaches the LLM.
@@ -11,12 +11,12 @@ from typing import Any, Optional
 
 import pytest
 
-from nirium.langchain_tools import (
+from veyra.langchain_tools import (
     DEFAULT_TOOL_DESCRIPTION,
     DEFAULT_TOOL_NAME,
-    NiriumX402Input,
-    NiriumX402Tool,
-    create_nirium_x402_tool,
+    VeyraX402Input,
+    VeyraX402Tool,
+    create_veyra_x402_tool,
     extract_settlement_tx,
     normalize_network,
     redact_secrets,
@@ -41,7 +41,7 @@ class FakeX402Agent:
         return {**self.payload, "url": url, "method": method, "echo": body}
 
 
-def _public_text(tool: NiriumX402Tool) -> str:
+def _public_text(tool: VeyraX402Tool) -> str:
     schema = tool.args_schema.model_json_schema()
     dumped = tool.model_dump() if hasattr(tool, "model_dump") else {}
     return " ".join(
@@ -69,19 +69,19 @@ def test_redact_secrets_strips_seed_and_payment_header() -> None:
 
 
 def test_tool_name_description_and_schema() -> None:
-    tool = NiriumX402Tool(agent=FakeX402Agent())
+    tool = VeyraX402Tool(agent=FakeX402Agent())
     assert tool.name == DEFAULT_TOOL_NAME
     assert tool.description == DEFAULT_TOOL_DESCRIPTION
 
-    schema = NiriumX402Input.model_json_schema()
+    schema = VeyraX402Input.model_json_schema()
     assert schema["properties"]["url"]["type"] == "string"
     assert "url" in schema.get("required", [])
     assert set(schema["properties"]) == {"url", "method", "body"}
-    assert tool.args_schema is NiriumX402Input
+    assert tool.args_schema is VeyraX402Input
 
 
 def test_schema_has_no_secret_fields() -> None:
-    tool = NiriumX402Tool(agent=FakeX402Agent())
+    tool = VeyraX402Tool(agent=FakeX402Agent())
     public = _public_text(tool).lower()
     assert "secret" not in public
     assert "seed" not in public
@@ -91,11 +91,11 @@ def test_schema_has_no_secret_fields() -> None:
 
 def test_invoke_returns_body_and_forwards_args() -> None:
     agent = FakeX402Agent(payload={"signals": ["beta"]})
-    tool = create_nirium_x402_tool(agent=agent)
+    tool = create_veyra_x402_tool(agent=agent)
 
     result = tool.invoke(
         {
-            "url": "https://nirium-agent.fly.dev/api/v1/premium/signals",
+            "url": "https://veyra-agent.fly.dev/api/v1/premium/signals",
             "method": "POST",
             "body": '{"limit": 2}',
         }
@@ -107,7 +107,7 @@ def test_invoke_returns_body_and_forwards_args() -> None:
     assert "abc123settlement" in result
     assert agent.calls == [
         {
-            "url": "https://nirium-agent.fly.dev/api/v1/premium/signals",
+            "url": "https://veyra-agent.fly.dev/api/v1/premium/signals",
             "method": "POST",
             "body": {"limit": 2},
         }
@@ -116,7 +116,7 @@ def test_invoke_returns_body_and_forwards_args() -> None:
 
 @pytest.mark.asyncio
 async def test_arun_returns_json_body() -> None:
-    tool = NiriumX402Tool(agent=FakeX402Agent(payload={"market": {"xlm": 0.1}}))
+    tool = VeyraX402Tool(agent=FakeX402Agent(payload={"market": {"xlm": 0.1}}))
     result = await tool._arun(url="https://example.test/premium")
     data, _, settlement = result.partition("\n\nx402_settlement_tx: ")
     payload = json.loads(data)
@@ -131,7 +131,7 @@ def test_invoke_sanitizes_errors_for_the_llm() -> None:
             "PAYMENT-SIGNATURE: header-value"
         )
     )
-    tool = NiriumX402Tool(agent=agent)
+    tool = VeyraX402Tool(agent=agent)
     result = tool.invoke({"url": "https://example.test/premium"})
     assert isinstance(result, str)
     assert LEAKED_SECRET not in result
@@ -141,30 +141,30 @@ def test_invoke_sanitizes_errors_for_the_llm() -> None:
 
 
 def test_repr_and_model_dump_hide_client_and_secret() -> None:
-    tool = NiriumX402Tool(agent=FakeX402Agent(), network="stellar:testnet")
+    tool = VeyraX402Tool(agent=FakeX402Agent(), network="stellar:testnet")
     dumped = json.dumps(tool.model_dump(), default=str)
     assert LEAKED_SECRET not in dumped
     assert "_client" not in dumped
     assert "secret" not in dumped.lower()
-    assert "NiriumX402Tool(name='nirium_x402_fetch'" in repr(tool)
+    assert "VeyraX402Tool(name='veyra_x402_fetch'" in repr(tool)
 
 
 def test_missing_secret_raises_safe_error(monkeypatch: pytest.MonkeyPatch) -> None:
     for key in (
         "STELLAR_SECRET_KEY",
         "STELLAR_TESTNET_SECRET_KEY",
-        "NIRIUM_STELLAR_SECRET",
+        "VEYRA_STELLAR_SECRET",
     ):
         monkeypatch.delenv(key, raising=False)
     with pytest.raises(ValueError, match="Stellar secret is required"):
-        NiriumX402Tool()
+        VeyraX402Tool()
 
 
 def test_factory_returns_configured_tool() -> None:
     agent = FakeX402Agent()
-    tool = create_nirium_x402_tool(agent=agent, network="stellar:testnet")
-    assert isinstance(tool, NiriumX402Tool)
-    assert tool.name == "nirium_x402_fetch"
+    tool = create_veyra_x402_tool(agent=agent, network="stellar:testnet")
+    assert isinstance(tool, VeyraX402Tool)
+    assert tool.name == "veyra_x402_fetch"
     assert tool.last_settlement == {"transaction": "abc123settlement"}
 
 
@@ -180,15 +180,15 @@ def test_constructor_wraps_existing_x402_client(monkeypatch: pytest.MonkeyPatch)
         def init_x402(self, secret_key: str, network: str = "stellar:testnet", rpc_url: str = "") -> None:
             self.inits.append((secret_key, network, rpc_url))
 
-    monkeypatch.setattr("nirium.langchain_tools.Agent", DummyAgent)
-    tool = NiriumX402Tool(secret_key=LEAKED_SECRET, network="testnet")
+    monkeypatch.setattr("veyra.langchain_tools.Agent", DummyAgent)
+    tool = VeyraX402Tool(secret_key=LEAKED_SECRET, network="testnet")
     assert created["agent"].inits == [(LEAKED_SECRET, "stellar:testnet", "")]
     assert LEAKED_SECRET not in _public_text(tool)
     assert "stellar:testnet" in repr(tool)
 
 
 def test_invalid_url_is_sanitized_for_the_llm() -> None:
-    tool = NiriumX402Tool(agent=FakeX402Agent())
+    tool = VeyraX402Tool(agent=FakeX402Agent())
     result = tool.invoke({"url": "not-a-url"})
     assert isinstance(result, str)
     assert "x402 request failed" in result

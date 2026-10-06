@@ -201,7 +201,7 @@ test('strict record parser rejects extra fields, unsorted hashes and noncanonica
   );
 });
 
-test('record size preflight rejects a hash list above Nirium 8KB limit', () => {
+test('record size preflight rejects a hash list above Veyra 8KB limit', () => {
   const hashes = Array.from({ length: 130 }, (_, index) => {
     return (index + 1).toString(16).padStart(64, '0');
   });

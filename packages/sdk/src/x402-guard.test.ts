@@ -6,7 +6,7 @@
  *
  * These reproduce the exact scenarios a real production x402Serve() user
  * (Edgadafi/remesa-liquidez) built their own version of this against, per
- * https://github.com/nirium-protocol/nirium/issues/91.
+ * https://github.com/veyra-protocol/veyra/issues/91.
  */
 
 import { checkReplay, checkRateLimit, type X402GuardStore, type X402GuardConfig, type GuardRequest } from './x402-guard';

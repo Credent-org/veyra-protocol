@@ -6,13 +6,13 @@ A complete TypeScript loop against a **live Stellar testnet** DeFindex vault:
 2. `depositToTreasuryVault({ vault, from, amounts })` → sign → `submitTreasuryTx`
 3. `getTreasuryVault(vault, holder)` → print the idle / invested split
 
-Nirium's SDK never holds a signing key in this path. The Agent only builds and broadcasts XDR.
+Veyra's SDK never holds a signing key in this path. The Agent only builds and broadcasts XDR.
 
 ## Why this is non-custodial
 
-- **Nirium builds unsigned XDR.** `deployTreasuryVault` and `depositToTreasuryVault` return `xdr` + `signWith`. Nothing is submitted until you sign.
+- **Veyra builds unsigned XDR.** `deployTreasuryVault` and `depositToTreasuryVault` return `xdr` + `signWith`. Nothing is submitted until you sign.
 - **`Agent` never touches a private key on this path.** This example constructs `new Agent({ apiKey, baseUrl })` — it receives no `S...` secret. Signing is done locally with `@stellar/stellar-sdk` (`Keypair.fromSecret` in `src/sign.ts`).
-- **Every signature comes from the caller's own keypair.** `manager` is set to *your* testnet address (the role that can rescue funds, pause strategies, and revoke rebalance). Nirium, if present at all, only holds `RebalanceManager`, which cannot withdraw. A browser port would sign with Freighter the same way: the wallet holds the key, the SDK does not.
+- **Every signature comes from the caller's own keypair.** `manager` is set to *your* testnet address (the role that can rescue funds, pause strategies, and revoke rebalance). Veyra, if present at all, only holds `RebalanceManager`, which cannot withdraw. A browser port would sign with Freighter the same way: the wallet holds the key, the SDK does not.
 
 This issue is deploy + deposit only. It does not call `executeTreasuryRebalance` or the RebalanceManager endpoints.
 
@@ -23,14 +23,14 @@ This issue is deploy + deposit only. It does not call `executeTreasuryRebalance`
   - **XLM** for fees / contract deploy — [Friendbot](https://friendbot.stellar.org) (`https://friendbot.stellar.org?addr=G...`)
   - A small balance of the vault asset. Default is **Blend testnet USDC** (`USDC-GATALTG…`, contract `CAQCFV…`) — not Circle USDC. The script opens that trustline if it is missing; then click Faucet on [testnet.blend.capital](https://testnet.blend.capital). Set `VAULT_ASSET=cetes` if you hold testnet CETES instead.
 
-You do **not** need a Nirium institutional API key. The script requests a public demo token with your G-address.
+You do **not** need a Veyra institutional API key. The script requests a public demo token with your G-address.
 
 ## Run (under 10 minutes)
 
 ```bash
 cd examples/treasury-vault-quickstart
 cp .env.example .env
-# put your own testnet S... key in .env — never a Nirium key, never mainnet
+# put your own testnet S... key in .env — never a Veyra key, never mainnet
 npm install
 npm start
 ```
@@ -42,8 +42,8 @@ The script prints two `stellar.expert/explorer/testnet/tx/<hash>` links (deploy 
 | Variable | Required | Default |
 |---|---|---|
 | `STELLAR_SECRET_KEY` | yes | — (your testnet `S...` only) |
-| `NIRIUM_API_KEY` | no | public `demo-auth` token |
-| `NIRIUM_BASE_URL` | no | `https://nirium-agent.fly.dev` |
+| `VEYRA_API_KEY` | no | public `demo-auth` token |
+| `VEYRA_BASE_URL` | no | `https://veyra-agent.fly.dev` |
 | `VAULT_ASSET` | no | `usdc` (`cetes` also supported) |
 | `DEPOSIT_AMOUNT_STROOPS` | no | `10000000` (1.0 with 7 decimals) |
 | `INVEST` | no | `false` (deposit stays idle so the split is obvious) |
@@ -74,4 +74,4 @@ src/errors.ts  insufficient-balance / passphrase error mapping
 src/usdc.ts    BlendUSDC trustline + balance preflight (not Circle USDC)
 ```
 
-SDK methods used: `Agent.deployTreasuryVault`, `Agent.depositToTreasuryVault`, `Agent.submitTreasuryTx`, `Agent.getTreasuryVault`, `Agent.getTreasuryInfo` (`nirium@0.12.0`).
+SDK methods used: `Agent.deployTreasuryVault`, `Agent.depositToTreasuryVault`, `Agent.submitTreasuryTx`, `Agent.getTreasuryVault`, `Agent.getTreasuryInfo` (`veyra@0.12.0`).

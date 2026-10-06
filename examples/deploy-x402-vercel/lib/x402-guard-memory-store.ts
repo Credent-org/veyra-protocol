@@ -1,4 +1,4 @@
-import type { X402GuardStore } from "nirium";
+import type { X402GuardStore } from "veyra";
 
 /**
  * In-memory reference X402GuardStore - for this demo template only.
@@ -12,7 +12,7 @@ import type { X402GuardStore } from "nirium";
  * try the template.
  *
  * For real production use, swap this for `createUpstashX402GuardStore()`
- * (exported by the `nirium` package) so every instance shares the same
+ * (exported by the `veyra` package) so every instance shares the same
  * durable store - see the README section on this.
  */
 export function createMemoryX402GuardStore(): X402GuardStore {

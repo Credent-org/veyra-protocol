@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2026 Nirium Protocol Contributors
+// Copyright 2026 Veyra Protocol Contributors
 
 // ═══════════════════════════════════════════════════════════════
-// Nirium MCP Server v0.6.0 — x402 + MPP + node tool suite
+// Veyra MCP Server v0.6.0 — x402 + MPP + node tool suite
 // ═══════════════════════════════════════════════════════════════
 //
-// Exposes Nirium Protocol capabilities to any MCP-compatible AI:
+// Exposes Veyra Protocol capabilities to any MCP-compatible AI:
 //   Claude, GPT, Codex, Cursor, VS Code Copilot, etc.
 //
 // Three tiers of tools:
@@ -25,12 +25,12 @@
 // Claude Desktop config (published package):
 //   {
 //     "mcpServers": {
-//       "nirium": {
+//       "veyra": {
 //         "command": "npx",
-//         "args": ["-y", "nirium-mcp"],
+//         "args": ["-y", "veyra-mcp"],
 //         "env": {
 //           "STELLAR_SECRET_KEY": "S...",
-//           "AGENT_API_URL": "https://nirium-agent.fly.dev"
+//           "AGENT_API_URL": "https://veyra-agent.fly.dev"
 //         }
 //       }
 //     }
@@ -51,7 +51,7 @@ import { stellar as mppStellar } from '@stellar/mpp/charge/client';
 
 const API_URL        = process.env.AGENT_API_URL       || 'http://127.0.0.1:3001';
 const STELLAR_KEY    = process.env.STELLAR_SECRET_KEY  || '';
-const NIRIUM_API_KEY = process.env.NIRIUM_API_KEY      || '';
+const VEYRA_API_KEY = process.env.VEYRA_API_KEY      || '';
 const IS_MAINNET     = process.env.STELLAR_NETWORK === 'mainnet';
 const STELLAR_NET    = (IS_MAINNET
     ? 'stellar:pubnet'
@@ -61,7 +61,7 @@ const STELLAR_NET    = (IS_MAINNET
 // mainnet abierto (el propio @x402/stellar lanza "mainnet requires a non-empty
 // rpcUrl"). Sin este guard, mainnet caía al RPC de testnet con el network id de
 // pubnet y el pago fallaba de forma confusa, con fondos reales. El RPC lo pone
-// quien corre el server — el endpoint dedicado de Nirium lleva token y vive
+// quien corre el server — el endpoint dedicado de Veyra lleva token y vive
 // como secreto del backend, nunca dentro de un paquete publicado.
 const RPC_URL = process.env.SOROBAN_RPC_URL
     || (IS_MAINNET ? '' : DEFAULT_TESTNET_RPC_URL);
@@ -86,7 +86,7 @@ const STELLAR_PUBLIC_KEY = (() => {
 
 // Auth headers for authenticated endpoints
 const authHeaders = (): Record<string, string> =>
-    NIRIUM_API_KEY ? { 'x-api-key': NIRIUM_API_KEY } : {};
+    VEYRA_API_KEY ? { 'x-api-key': VEYRA_API_KEY } : {};
 
 // Auth + legal consent headers (required by loop/start and execute endpoints)
 const consentHeaders = (): Record<string, string> => ({
@@ -107,9 +107,9 @@ if (PAYMENTS_ENABLED) {
     const client = new x402Client()
         .register(STELLAR_NET, new ExactStellarScheme(signer, { url: RPC_URL }));
     paidFetch = wrapFetchWithPayment(fetch, client) as typeof fetch;
-    console.error(`[Nirium MCP] x402 wallet: ${signer.address} | network: ${STELLAR_NET}`);
+    console.error(`[Veyra MCP] x402 wallet: ${signer.address} | network: ${STELLAR_NET}`);
 } else {
-    console.error(`[Nirium MCP] Paid tools disabled — ${PAYMENTS_DISABLED_REASON}`);
+    console.error(`[Veyra MCP] Paid tools disabled — ${PAYMENTS_DISABLED_REASON}`);
 }
 
 // ─── MPP Payment Client ───────────────────────────────────────
@@ -131,15 +131,15 @@ if (PAYMENTS_ENABLED) {
         ],
     });
     mppFetch = mppx.fetch as typeof fetch;
-    console.error(`[Nirium MCP] MPP Charge enabled | network: ${STELLAR_NET}`);
+    console.error(`[Veyra MCP] MPP Charge enabled | network: ${STELLAR_NET}`);
 } else {
-    console.error(`[Nirium MCP] MPP tools disabled — ${PAYMENTS_DISABLED_REASON}`);
+    console.error(`[Veyra MCP] MPP tools disabled — ${PAYMENTS_DISABLED_REASON}`);
 }
 
 // ─── Server ───────────────────────────────────────────────────
 
 const server = new McpServer(
-    { name: 'nirium-mcp-server', version: '0.6.0' },
+    { name: 'veyra-mcp-server', version: '0.6.0' },
     { capabilities: { tools: {} } },
 );
 
@@ -197,7 +197,7 @@ server.tool(
 
 server.tool(
     'start_loop',
-    'Start the autonomous market scanning loop. Requires NIRIUM_API_KEY env var.',
+    'Start the autonomous market scanning loop. Requires VEYRA_API_KEY env var.',
     {
         minProfitPercentage: z.number().optional().describe('Minimum profit % to trigger (default: 0.3)'),
         maxBaseFee: z.number().optional().describe('Max Stellar base fee in stroops (default: 500)'),
@@ -215,7 +215,7 @@ server.tool(
 
 server.tool(
     'stop_loop',
-    'Stop the autonomous scanning loop. Requires NIRIUM_API_KEY env var.',
+    'Stop the autonomous scanning loop. Requires VEYRA_API_KEY env var.',
     {},
     async () => {
         const res = await fetch(`${API_URL}/api/loop/stop`, {
@@ -278,7 +278,7 @@ server.tool(
 
 server.tool(
     'execute_paid_strategy',
-    'PAID ($0.25 USDC via x402) — Execute a DeFi strategy on Stellar via Soroban. No Nirium account required — pay per execution. Requires funded Stellar wallet.',
+    'PAID ($0.25 USDC via x402) — Execute a DeFi strategy on Stellar via Soroban. No Veyra account required — pay per execution. Requires funded Stellar wallet.',
     {
         strategy: z.string().describe('Strategy: flash-loan-arb | path-arbitrage | cross-dex | blend-yield | soroswap-swap'),
         asset: z.string().describe('Trading pair, e.g. XLM-USDC'),
@@ -302,7 +302,7 @@ server.tool(
         network: STELLAR_NET,
         rpcUrl: RPC_URL || null,
         agentApiUrl: API_URL,
-        niriumApiKeySet: !!NIRIUM_API_KEY,
+        veyraApiKeySet: !!VEYRA_API_KEY,
         x402Enabled: PAYMENTS_ENABLED,
         mppEnabled: PAYMENTS_ENABLED,
         ...(PAYMENTS_ENABLED ? {} : { paymentsDisabledReason: PAYMENTS_DISABLED_REASON }),
@@ -331,7 +331,7 @@ server.tool(
 
 server.tool(
     'get_nodes',
-    'List the Nirium execution nodes with their live status, custody model and network (testnet/mainnet). Free — reads the protocol registry.',
+    'List the Veyra execution nodes with their live status, custody model and network (testnet/mainnet). Free — reads the protocol registry.',
     {},
     async () => callJson(`${API_URL}/api/nodes`),
 );
@@ -408,10 +408,10 @@ server.tool(
 
 // ─── TREASURY (DeFindex) ───────────────────────────────────────
 //
-// Nirium never holds these funds. It holds the RebalanceManager role of a
+// Veyra never holds these funds. It holds the RebalanceManager role of a
 // DeFindex vault the client deploys and owns. The four read tools below hit
 // public GET routes — free, no key required. The write tools hit routes
-// behind the agent's own auth (NIRIUM_API_KEY) and every one of them returns
+// behind the agent's own auth (VEYRA_API_KEY) and every one of them returns
 // an UNSIGNED XDR *except* execute_treasury_rebalance, which is the one
 // route the agent signs itself, with its own server-side key — never the
 // caller's. Even then it cannot withdraw: rebalance() takes no destination
@@ -420,7 +420,7 @@ server.tool(
 
 server.tool(
     'get_treasury_info',
-    'Treasury node metadata: what role Nirium holds on DeFindex vaults, what it can and cannot do, fees, security notes. Free.',
+    'Treasury node metadata: what role Veyra holds on DeFindex vaults, what it can and cannot do, fees, security notes. Free.',
     {},
     async () => callJson(`${API_URL}/api/treasury/info`),
 );
@@ -440,7 +440,7 @@ server.tool(
 
 server.tool(
     'get_treasury_vaults',
-    'List DeFindex vaults Nirium has deployed or read, on the current network. Free.',
+    'List DeFindex vaults Veyra has deployed or read, on the current network. Free.',
     {
         manager: z.string().optional().describe('Filter by vault Manager (G...)'),
     },
@@ -461,7 +461,7 @@ server.tool(
 
 server.tool(
     'deploy_treasury_vault',
-    "Build an UNSIGNED XDR to deploy a DeFindex vault. `manager` keeps control (rescue, pause, revoke); Nirium only ever holds `rebalanceManager`, which cannot withdraw or change roles. Sign the returned XDR with `caller` and broadcast it with submit_treasury_tx. Requires NIRIUM_API_KEY env var.",
+    "Build an UNSIGNED XDR to deploy a DeFindex vault. `manager` keeps control (rescue, pause, revoke); Veyra only ever holds `rebalanceManager`, which cannot withdraw or change roles. Sign the returned XDR with `caller` and broadcast it with submit_treasury_tx. Requires VEYRA_API_KEY env var.",
     {
         manager: z.string().describe('Stellar account (G...) that owns and controls the vault'),
         caller: z.string().describe('Stellar account (G...) that pays to deploy and signs the returned XDR'),
@@ -476,7 +476,7 @@ server.tool(
         symbol: z.string(),
         emergencyManager: z.string().optional().describe('Defaults to `manager`'),
         feeReceiver: z.string().optional().describe('Defaults to `manager`'),
-        rebalanceManager: z.string().optional().describe("Defaults to Nirium's configured role address; required as an explicit value on mainnet"),
+        rebalanceManager: z.string().optional().describe("Defaults to Veyra's configured role address; required as an explicit value on mainnet"),
     },
     async (args) => callJson(`${API_URL}/api/treasury/deploy`, {
         method: 'POST',
@@ -487,7 +487,7 @@ server.tool(
 
 server.tool(
     'deposit_to_treasury_vault',
-    'Build an UNSIGNED XDR to deposit into a DeFindex vault. Sign with `from` and broadcast it with submit_treasury_tx. Requires NIRIUM_API_KEY env var.',
+    'Build an UNSIGNED XDR to deposit into a DeFindex vault. Sign with `from` and broadcast it with submit_treasury_tx. Requires VEYRA_API_KEY env var.',
     {
         vault: z.string().describe('Vault contract id (C...)'),
         from: z.string().describe('Stellar account (G...) funding the deposit and signing the returned XDR'),
@@ -504,7 +504,7 @@ server.tool(
 
 server.tool(
     'withdraw_from_treasury_vault',
-    'Build an UNSIGNED XDR to withdraw from a DeFindex vault. Omit `shares` to withdraw everything the account holds. Sign with `from` and broadcast it with submit_treasury_tx. Requires NIRIUM_API_KEY env var.',
+    'Build an UNSIGNED XDR to withdraw from a DeFindex vault. Omit `shares` to withdraw everything the account holds. Sign with `from` and broadcast it with submit_treasury_tx. Requires VEYRA_API_KEY env var.',
     {
         vault: z.string().describe('Vault contract id (C...)'),
         from: z.string().describe('Stellar account (G...) holding the vault shares and signing the returned XDR'),
@@ -520,7 +520,7 @@ server.tool(
 
 server.tool(
     'set_treasury_rebalance_manager',
-    "Build an UNSIGNED XDR handing the RebalanceManager role to a new address. Only the vault's current Manager can sign it — the same door that grants Nirium the role also revokes it. Requires NIRIUM_API_KEY env var.",
+    "Build an UNSIGNED XDR handing the RebalanceManager role to a new address. Only the vault's current Manager can sign it — the same door that grants Veyra the role also revokes it. Requires VEYRA_API_KEY env var.",
     {
         vault: z.string().describe('Vault contract id (C...)'),
         manager: z.string().describe("The vault's current Manager (G...), who must sign the returned XDR"),
@@ -541,11 +541,11 @@ const treasuryInstruction = z.object({
 
 server.tool(
     'build_treasury_rebalance',
-    "Build an UNSIGNED rebalance XDR — Unwind/Invest between a vault's own strategies only; no other instruction is expressible, and none takes a destination address. Sign with the vault's RebalanceManager and broadcast it with submit_treasury_tx. Requires NIRIUM_API_KEY env var.",
+    "Build an UNSIGNED rebalance XDR — Unwind/Invest between a vault's own strategies only; no other instruction is expressible, and none takes a destination address. Sign with the vault's RebalanceManager and broadcast it with submit_treasury_tx. Requires VEYRA_API_KEY env var.",
     {
         vault: z.string().describe('Vault contract id (C...)'),
         instructions: z.array(treasuryInstruction).min(1),
-        caller: z.string().optional().describe("Defaults to Nirium's configured rebalanceManager address"),
+        caller: z.string().optional().describe("Defaults to Veyra's configured rebalanceManager address"),
     },
     async (args) => callJson(`${API_URL}/api/treasury/rebalance`, {
         method: 'POST',
@@ -556,11 +556,11 @@ server.tool(
 
 server.tool(
     'execute_treasury_rebalance',
-    "Sign and submit a rebalance with Nirium's OWN RebalanceManager key, server-side, and wait for confirmation — the only treasury tool that signs anything itself, and it still cannot withdraw funds. Only available where that key actually lives; a receive-only mainnet box returns 501 by design, not a broken 500. Requires NIRIUM_API_KEY env var.",
+    "Sign and submit a rebalance with Veyra's OWN RebalanceManager key, server-side, and wait for confirmation — the only treasury tool that signs anything itself, and it still cannot withdraw funds. Only available where that key actually lives; a receive-only mainnet box returns 501 by design, not a broken 500. Requires VEYRA_API_KEY env var.",
     {
         vault: z.string().describe('Vault contract id (C...)'),
         instructions: z.array(treasuryInstruction).min(1),
-        caller: z.string().optional().describe("Defaults to Nirium's configured rebalanceManager address"),
+        caller: z.string().optional().describe("Defaults to Veyra's configured rebalanceManager address"),
     },
     async (args) => callJson(`${API_URL}/api/treasury/rebalance/execute`, {
         method: 'POST',
@@ -571,7 +571,7 @@ server.tool(
 
 server.tool(
     'submit_treasury_tx',
-    'Broadcast a treasury XDR you already signed (deploy/deposit/withdraw/rebalance/set-rebalance-manager) and wait for confirmation. Requires NIRIUM_API_KEY env var.',
+    'Broadcast a treasury XDR you already signed (deploy/deposit/withdraw/rebalance/set-rebalance-manager) and wait for confirmation. Requires VEYRA_API_KEY env var.',
     {
         xdr: z.string().describe('Signed transaction XDR'),
     },
@@ -587,14 +587,14 @@ server.tool(
 async function main(): Promise<void> {
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.error('[Nirium MCP] v0.6.0 running on stdio');
-    console.error(`[Nirium MCP] Agent API: ${API_URL}`);
-    console.error(`[Nirium MCP] NIRIUM_API_KEY set: ${!!NIRIUM_API_KEY}`);
-    console.error(`[Nirium MCP] x402 enabled: ${!!STELLAR_KEY}`);
-    console.error(`[Nirium MCP] MPP Charge enabled: ${!!STELLAR_KEY}`);
+    console.error('[Veyra MCP] v0.6.0 running on stdio');
+    console.error(`[Veyra MCP] Agent API: ${API_URL}`);
+    console.error(`[Veyra MCP] VEYRA_API_KEY set: ${!!VEYRA_API_KEY}`);
+    console.error(`[Veyra MCP] x402 enabled: ${!!STELLAR_KEY}`);
+    console.error(`[Veyra MCP] MPP Charge enabled: ${!!STELLAR_KEY}`);
 }
 
 main().catch((err) => {
-    console.error('[Nirium MCP] Fatal error:', err);
+    console.error('[Veyra MCP] Fatal error:', err);
     process.exit(1);
 });

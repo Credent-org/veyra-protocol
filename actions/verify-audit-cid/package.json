@@ -1,9 +1,9 @@
 {
-  "name": "@nirium/verify-audit-cid-action",
+  "name": "@veyra/verify-audit-cid-action",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "GitHub Action for verifying Nirium audit CIDs.",
+  "description": "GitHub Action for verifying Veyra audit CIDs.",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -12,7 +12,7 @@
     "test": "npm run build && node --test test/*.test.js"
   },
   "keywords": [
-    "nirium",
+    "veyra",
     "ipfs",
     "audit",
     "stellar",

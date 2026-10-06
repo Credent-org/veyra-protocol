@@ -1,11 +1,11 @@
-# Verify Nirium Audit CID Action
+# Verify Veyra Audit CID Action
 
-This action verifies a Nirium audit document fetched from IPFS. It recomputes
+This action verifies a Veyra audit document fetched from IPFS. It recomputes
 `SHA-256(JSON.stringify(doc.record))`, compares that value to
 `content_sha256`, and verifies an optional Stellar Ed25519 agent attestation
-over `nirium-audit-v1:<content_sha256>`.
+over `veyra-audit-v1:<content_sha256>`.
 
-The action does not call a Nirium API. The CID and gateway are the only network
+The action does not call a Veyra API. The CID and gateway are the only network
 inputs.
 
 ## Usage
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nirium-protocol/nirium-sdk/actions/verify-audit-cid@main
+      - uses: veyra-protocol/veyra-sdk/actions/verify-audit-cid@main
         id: audit
         with:
           cid: QmSSZdtt3dQ8BqUm62zrKQ85E4BUHYiVfvDgZmHfJsqU1U
@@ -28,7 +28,7 @@ jobs:
 
 | Name | Required | Default | Description |
 | --- | --- | --- | --- |
-| `cid` | yes | | IPFS CID for the Nirium audit JSON document. |
+| `cid` | yes | | IPFS CID for the Veyra audit JSON document. |
 | `gateway` | no | `https://ipfs.io/ipfs/` | IPFS gateway. Values ending in `/ipfs` or `/ipfs/` are used directly. |
 | `fail-on-error` | no | `true` | When `true`, failed verification marks the step failed. |
 

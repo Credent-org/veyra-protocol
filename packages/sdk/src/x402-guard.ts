@@ -4,7 +4,7 @@
  * x402Serve() verifies and settles a payment; on its own it does not stop
  * the same signed payment proof from being replayed against a route (a
  * concurrent-request "free shopping" window), and it does not rate-limit
- * callers. See https://github.com/nirium-protocol/nirium/issues/91.
+ * callers. See https://github.com/veyra-protocol/veyra/issues/91.
  *
  * The design here (single-use claim keyed on the payment proof + method +
  * route, released only if the request did NOT end in 2xx so a legitimate
@@ -109,7 +109,7 @@ export async function checkReplay(req: GuardRequest, config: X402GuardConfig): P
     // scheme itself already puts on resource.url — a proof burned against
     // route A doesn't block its own legitimate use against route B.
     const digest = createHash('sha256').update(raw).update('\n').update(`${req.method} ${req.url}`).digest('hex');
-    const key = `nirium:x402guard:replay:${digest}`;
+    const key = `veyra:x402guard:replay:${digest}`;
 
     let claimed: boolean;
     try {
@@ -151,7 +151,7 @@ export async function checkRateLimit(req: GuardRequest, config: X402GuardConfig)
     if (!config.rateLimit) return { allowed: true };
 
     const ip = req.ip || 'unknown';
-    const key = `nirium:x402guard:rl:${ip}`;
+    const key = `veyra:x402guard:rl:${ip}`;
     const member = `${Date.now()}:${Math.random().toString(36).slice(2, 10)}`;
 
     let count: number;

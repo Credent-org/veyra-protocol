@@ -1,6 +1,6 @@
 # Resilient WebSocket Signals Client Example (`examples/ws-signals-resilient`)
 
-A production-ready example demonstrating the `ResilientSignalClient` from the [`nirium`](https://www.npmjs.com/package/nirium) SDK.
+A production-ready example demonstrating the `ResilientSignalClient` from the [`veyra`](https://www.npmjs.com/package/veyra) SDK.
 
 It provides zero-downtime, auto-reconnecting WebSocket signal streaming with exponential backoff + jitter, token refresh hooks, and deduplication of burst signals.
 
@@ -24,17 +24,17 @@ npm start
 
 | Variable | Description | Default |
 |---|---|---|
-| `NIRIUM_WS_URL` | WebSocket signal feed endpoint | `wss://nirium-agent.fly.dev/ws/signals` |
-| `NIRIUM_JWT_TOKEN` | Optional authentication JWT token | `""` |
-| `NIRIUM_JWT_REFRESH_URL` | Endpoint to fetch fresh JWT on reconnect | `""` |
+| `VEYRA_WS_URL` | WebSocket signal feed endpoint | `wss://veyra-agent.fly.dev/ws/signals` |
+| `VEYRA_JWT_TOKEN` | Optional authentication JWT token | `""` |
+| `VEYRA_JWT_REFRESH_URL` | Endpoint to fetch fresh JWT on reconnect | `""` |
 
 ## Usage Example
 
 ```typescript
-import { ResilientSignalClient, Signal } from 'nirium';
+import { ResilientSignalClient, Signal } from 'veyra';
 
 const client = new ResilientSignalClient({
-  url: 'wss://nirium-agent.fly.dev/ws/signals',
+  url: 'wss://veyra-agent.fly.dev/ws/signals',
   initialBackoffMs: 1000,
   maxBackoffMs: 30000,
   maxReconnectAttempts: 10,

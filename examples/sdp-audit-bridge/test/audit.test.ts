@@ -4,7 +4,7 @@ import test from 'node:test';
 import { Keypair } from '@stellar/stellar-sdk';
 import {
   anchorDisbursementBatch,
-  parseNiriumAnchorResponse,
+  parseVeyraAnchorResponse,
   verifyAuditCid,
 } from '../src/audit.js';
 import {
@@ -93,7 +93,7 @@ test('valid Ed25519 attestation signs the recomputed domain-separated statement'
   const anchoredRecord = record();
   const contentSha256 = hashAuditRecord(anchoredRecord);
   const signer = Keypair.random();
-  const statement = `nirium-audit-v1:${contentSha256}`;
+  const statement = `veyra-audit-v1:${contentSha256}`;
   const document = {
     content_sha256: contentSha256,
     record: anchoredRecord,
@@ -130,7 +130,7 @@ test('anchoring signs the locally recomputed record hash when a key is configure
         agent: { key: string; signature: string };
       };
       const contentSha256 = hashAuditRecord(body.record);
-      const statement = `nirium-audit-v1:${contentSha256}`;
+      const statement = `veyra-audit-v1:${contentSha256}`;
       assert.equal(body.agent.key, signer.publicKey());
       assert.equal(
         signer.verify(Buffer.from(statement), Buffer.from(body.agent.signature, 'base64')),
@@ -162,7 +162,7 @@ test('anchoring signs the locally recomputed record hash when a key is configure
       horizonUrl: 'https://horizon.test',
       fetchFn: singlePaymentHorizonFetch(TX_A),
       maxRetries: 0,
-      niriumApiUrl: `http://127.0.0.1:${address.port}`,
+      veyraApiUrl: `http://127.0.0.1:${address.port}`,
       agentSecretKey: signer.secret(),
     });
     assert.equal(requestChecked, true);
@@ -180,7 +180,7 @@ test('statement-substitution attack is rejected even when the declared hash matc
   const originalHash = hashAuditRecord(original);
   const signer = Keypair.random();
   const signature = signer
-    .sign(Buffer.from(`nirium-audit-v1:${originalHash}`))
+    .sign(Buffer.from(`veyra-audit-v1:${originalHash}`))
     .toString('base64');
   const tampered = { ...original, totalAmount: '999.0000000' };
   const document = {
@@ -189,7 +189,7 @@ test('statement-substitution attack is rejected even when the declared hash matc
     agent: {
       key: signer.publicKey(),
       signature,
-      statement: `nirium-audit-v1:${originalHash}`,
+      statement: `veyra-audit-v1:${originalHash}`,
     },
   };
   await assert.rejects(
@@ -285,8 +285,8 @@ test('oversized and malformed gateway documents are rejected', async () => {
   );
 });
 
-test('Nirium live snake_case content hash is normalized and still checked', () => {
-  const parsed = parseNiriumAnchorResponse({
+test('Veyra live snake_case content hash is normalized and still checked', () => {
+  const parsed = parseVeyraAnchorResponse({
     cid: CID,
     content_sha256: 'A'.repeat(64),
     anchoredAt: '2026-08-26T16:42:38.751Z',
@@ -295,7 +295,7 @@ test('Nirium live snake_case content hash is normalized and still checked', () =
   assert.equal(parsed.contentSha256, 'a'.repeat(64));
   assert.equal(parsed.cid, CID);
   assert.throws(
-    () => parseNiriumAnchorResponse({ cid: CID, anchoredAt: 'now' }),
+    () => parseVeyraAnchorResponse({ cid: CID, anchoredAt: 'now' }),
     /invalid content hash/,
   );
 });

@@ -1,11 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { withNiriumX402, withX402Protection } from "../app/lib/nirium-x402-seller.ts";
+import { withVeyraX402, withX402Protection } from "../app/lib/veyra-x402-seller.ts";
 
 const VALID_PAY_TO = "GBRPYHIL2CI3FNQ4BXLFMNDLFJUNPU2HY3ZMFXYSFZUKW3T2TRWECCHX";
 
 test("smoke test: returns 500 when PAY_TO is invalid or missing", async () => {
-  const handler = withNiriumX402(
+  const handler = withVeyraX402(
     { payTo: "invalid-address", resource: "/api/premium/signals" },
     async () => Response.json({ ok: true })
   );
@@ -18,7 +18,7 @@ test("smoke test: returns 500 when PAY_TO is invalid or missing", async () => {
 });
 
 test("smoke test: returns 500 when facilitator is not configured (fails closed)", async () => {
-  const handler = withNiriumX402(
+  const handler = withVeyraX402(
     { payTo: VALID_PAY_TO, resource: "/api/premium/signals" },
     async () => Response.json({ ok: true })
   );
@@ -32,7 +32,7 @@ test("smoke test: returns 500 when facilitator is not configured (fails closed)"
 });
 
 test("smoke test: returns 503 when facilitator key or connection fails", async () => {
-  const handler = withNiriumX402(
+  const handler = withVeyraX402(
     {
       payTo: VALID_PAY_TO,
       resource: "/api/premium/signals",
@@ -50,7 +50,7 @@ test("smoke test: returns 503 when facilitator key or connection fails", async (
 
 test("smoke test: rejects arbitrary X-PAYMENT header without calling handler", async () => {
   let handlerCalled = false;
-  const handler = withNiriumX402(
+  const handler = withVeyraX402(
     {
       payTo: VALID_PAY_TO,
       resource: "/api/premium/signals",
@@ -74,7 +74,7 @@ test("smoke test: rejects arbitrary X-PAYMENT header without calling handler", a
 
 test("smoke test: rejects arbitrary PAYMENT-SIGNATURE header without calling handler", async () => {
   let handlerCalled = false;
-  const handler = withNiriumX402(
+  const handler = withVeyraX402(
     {
       payTo: VALID_PAY_TO,
       resource: "/api/premium/signals",

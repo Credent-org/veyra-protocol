@@ -1,15 +1,15 @@
-# nirium-cli
+# veyra-cli
 
 Scaffold Stellar agent projects — including one that charges for itself.
 
 ```bash
-npm install -g nirium-cli
+npm install -g veyra-cli
 ```
 
 ## Charge for your API in five minutes
 
 ```bash
-nirium create x402 --name my-paid-api
+veyra create x402 --name my-paid-api
 cd my-paid-api && npm install
 ```
 
@@ -34,43 +34,43 @@ transfer settles on Stellar before your handler returns. No subscription, no
 card, no invoice, no human in the middle.
 
 The generated server is about ten lines, because `x402Serve()` from the
-[`nirium`](https://www.npmjs.com/package/nirium) SDK carries the facilitator
+[`veyra`](https://www.npmjs.com/package/veyra) SDK carries the facilitator
 client, the scheme registration and the route shape.
 
 **Usage telemetry (disclosed, not hidden):** once running, `x402Serve()`
-sends Nirium a small, non-blocking usage ping — a SHA-256 hash of your
+sends Veyra a small, non-blocking usage ping — a SHA-256 hash of your
 `X402_FACILITATOR_API_KEY` (never the key itself), your `STELLAR_PAY_TO`
 address, network, route/request counts, and the SDK version, timestamped
 server-side. It never blocks, delays, or fails a charge if the ping fails.
-This is the only way Nirium knows whether a scaffolded server like this one
+This is the only way Veyra knows whether a scaffolded server like this one
 is actually running in production — it doesn't authorize or gate anything.
-Set `NIRIUM_X402SERVE_TELEMETRY=false` in the generated `.env` to opt out.
+Set `VEYRA_X402SERVE_TELEMETRY=false` in the generated `.env` to opt out.
 
 ## Listen to protocol signals
 
 ```bash
-nirium create bot --name my-agent          # TypeScript
-nirium create bot --name my-agent -t py    # Python
+veyra create bot --name my-agent          # TypeScript
+veyra create bot --name my-agent -t py    # Python
 ```
 
-Scaffolds a project that connects to a Nirium agent and prints incoming
-signals, which the autonomous loop produces on testnet. Defaults to `https://nirium-agent.fly.dev` (testnet); set
-`NIRIUM_API_URL` and `NIRIUM_API_KEY` in `.env` to point somewhere else.
+Scaffolds a project that connects to a Veyra agent and prints incoming
+signals, which the autonomous loop produces on testnet. Defaults to `https://veyra-agent.fly.dev` (testnet); set
+`VEYRA_API_URL` and `VEYRA_API_KEY` in `.env` to point somewhere else.
 
 ## Pay an x402 endpoint from the terminal
 
 ```bash
-nirium pay https://your-api.example.com/premium/signals --secret S...
+veyra pay https://your-api.example.com/premium/signals --secret S...
 ```
 
 Signs and settles a real x402 payment against any endpoint that returns a
 402, then prints the response. No scaffolding involved — this hits a live
-server directly, useful for testing a `nirium serve` instance or someone
+server directly, useful for testing a `veyra serve` instance or someone
 else's paid API without writing a client.
 
 | Option | Purpose |
 |---|---|
-| `-s, --secret <secret>` | Stellar secret key (`S...`) that pays. Also read from `NIRIUM_SECRET_KEY` or `nirium config set secretKey S...`, in that order. |
+| `-s, --secret <secret>` | Stellar secret key (`S...`) that pays. Also read from `VEYRA_SECRET_KEY` or `veyra config set secretKey S...`, in that order. |
 | `-n, --network <network>` | `stellar:testnet` (default) or `stellar:pubnet` |
 | `-a, --amount <amount>` | Override the price the server advertises |
 | `--json` | Machine-readable result: status, duration, payer, tx hash, response body |
@@ -83,10 +83,10 @@ network call happens.
 ## Spin up a local x402 test server
 
 ```bash
-nirium serve --pay-to G... --api-key <facilitator-key>
+veyra serve --pay-to G... --api-key <facilitator-key>
 ```
 
-A one-command x402 server for testing `nirium pay` (or any x402 client)
+A one-command x402 server for testing `veyra pay` (or any x402 client)
 against, without scaffolding a whole project. Same facilitator requirement
 as `create x402`: get a free key at
 [channels.openzeppelin.com/gen](https://channels.openzeppelin.com/gen).
@@ -100,19 +100,19 @@ as `create x402`: get a free key at
 | `-r, --route <route>` | path to protect | `/api/v1/data` |
 | `-n, --network <network>` | `stellar:testnet` or `stellar:pubnet` | `stellar:testnet` |
 
-`--pay-to` and `--api-key` can also come from `nirium config set` instead
+`--pay-to` and `--api-key` can also come from `veyra config set` instead
 of being passed every time.
 
 ## Check an agent
 
 ```bash
-nirium status
+veyra status
 ```
 
 ## Diagnose your x402/MPP setup
 
 ```bash
-nirium doctor --network testnet
+veyra doctor --network testnet
 ```
 
 Five checks against your actual environment before you find out the hard
@@ -135,13 +135,13 @@ deploy.
 ## Verify an audit record
 
 ```bash
-nirium verify <cid>
+veyra verify <cid>
 ```
 
-Independently re-checks a Nirium audit document anchored to IPFS: fetches
+Independently re-checks a Veyra audit document anchored to IPFS: fetches
 it from a gateway, recomputes its SHA-256 content hash, and — if the
 document carries an agent attestation — verifies the ed25519 signature
-over `nirium-audit-v1:<content_sha256>` against the declared signer's
+over `veyra-audit-v1:<content_sha256>` against the declared signer's
 Stellar public key. Nothing here trusts the document's own claims about
 itself; both the hash and the signed statement are recomputed from the
 raw content, not read off the document.
@@ -157,14 +157,14 @@ or the signature doesn't verify.
 ## Manage stored credentials
 
 ```bash
-nirium config set secretKey S...
-nirium config list
-nirium config get payTo
-nirium config delete facilitatorApiKey
+veyra config set secretKey S...
+veyra config list
+veyra config get payTo
+veyra config delete facilitatorApiKey
 ```
 
 Stores `secretKey`, `payTo`, `network`, and `facilitatorApiKey` in
-`~/.niriumrc.json` (mode `600`) so `pay`, `serve`, and `doctor` don't need
+`~/.veyrarc.json` (mode `600`) so `pay`, `serve`, and `doctor` don't need
 them repeated on every invocation — command-line flags and environment
 variables still take priority when present. `list` and `get` mask secret
 values in their output; the raw file is never printed.
@@ -173,15 +173,15 @@ values in their output; the raw file is never printed.
 
 | Option | Values | Default |
 |---|---|---|
-| `-n, --name <name>` | project directory name | `nirium-bot-v1` |
+| `-n, --name <name>` | project directory name | `veyra-bot-v1` |
 | `-t, --template <template>` | `ts` or `py` — `bot` only | `ts` |
 
 ## Links
 
-- [nirium.xyz](https://nirium.xyz)
-- [TypeScript SDK](https://www.npmjs.com/package/nirium) · [Python SDK](https://pypi.org/project/nirium/)
-- [Source and examples on GitHub](https://github.com/nirium-protocol/nirium)
+- [veyra.xyz](https://veyra.xyz)
+- [TypeScript SDK](https://www.npmjs.com/package/veyra) · [Python SDK](https://pypi.org/project/veyra/)
+- [Source and examples on GitHub](https://github.com/veyra-protocol/veyra)
 
 ## License
 
-Apache 2.0 — Nirium Protocol
+Apache 2.0 — Veyra Protocol

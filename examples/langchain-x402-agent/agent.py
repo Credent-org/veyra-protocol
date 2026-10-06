@@ -1,4 +1,4 @@
-"""Minimal LangChain agent that pays a real Nirium x402 testnet endpoint.
+"""Minimal LangChain agent that pays a real Veyra x402 testnet endpoint.
 
 The default path uses a scripted ReAct-style chat model so the example can
 prove the tool works inside a standard LangChain agent loop without spending
@@ -17,28 +17,28 @@ from typing import Any
 from dotenv import load_dotenv
 from langchain_core.messages import AIMessage, HumanMessage
 
-from nirium import NiriumX402Tool
-from nirium.langchain_tools import extract_settlement_tx
-from nirium.langchain_tools import extract_settlement_tx
+from veyra import VeyraX402Tool
+from veyra.langchain_tools import extract_settlement_tx
+from veyra.langchain_tools import extract_settlement_tx
 
-DEFAULT_URL = "https://nirium-agent.fly.dev/api/v1/premium/signals"
+DEFAULT_URL = "https://veyra-agent.fly.dev/api/v1/premium/signals"
 
 
-def _load_tool() -> NiriumX402Tool:
+def _load_tool() -> VeyraX402Tool:
     load_dotenv()
     if not (
         os.getenv("STELLAR_SECRET_KEY")
         or os.getenv("STELLAR_TESTNET_SECRET_KEY")
-        or os.getenv("NIRIUM_STELLAR_SECRET")
+        or os.getenv("VEYRA_STELLAR_SECRET")
     ):
         raise SystemExit(
             "Set STELLAR_SECRET_KEY to a funded Stellar testnet secret before running."
         )
-    return NiriumX402Tool(network=os.getenv("NIRIUM_X402_NETWORK") or "stellar:testnet")
+    return VeyraX402Tool(network=os.getenv("VEYRA_X402_NETWORK") or "stellar:testnet")
 
 
 def _premium_url() -> str:
-    return os.getenv("NIRIUM_PREMIUM_URL") or DEFAULT_URL
+    return os.getenv("VEYRA_PREMIUM_URL") or DEFAULT_URL
 
 
 def _scripted_model(url: str):
@@ -56,15 +56,15 @@ def _scripted_model(url: str):
                 content="",
                 tool_calls=[
                     {
-                        "name": "nirium_x402_fetch",
+                        "name": "veyra_x402_fetch",
                         "args": {"url": url, "method": "GET"},
-                        "id": "call_nirium_x402_1",
+                        "id": "call_veyra_x402_1",
                     }
                 ],
             ),
             AIMessage(
                 content=(
-                    "Paid the Nirium x402 testnet endpoint and received the "
+                    "Paid the Veyra x402 testnet endpoint and received the "
                     "protected response body."
                 )
             ),
@@ -78,7 +78,7 @@ def _live_model():
     return ChatOpenAI(model=os.getenv("OPENAI_MODEL") or "gpt-4o-mini", temperature=0)
 
 
-def _run_tool_loop(model: Any, tool: NiriumX402Tool, prompt: str) -> dict[str, Any]:
+def _run_tool_loop(model: Any, tool: VeyraX402Tool, prompt: str) -> dict[str, Any]:
     """Fallback ReAct-style tool loop if create_agent is unavailable."""
     from langchain_core.messages import ToolMessage
 
@@ -97,7 +97,7 @@ def _run_tool_loop(model: Any, tool: NiriumX402Tool, prompt: str) -> dict[str, A
     return {"messages": messages}
 
 
-def _build_agent(model: Any, tool: NiriumX402Tool):
+def _build_agent(model: Any, tool: VeyraX402Tool):
     try:
         from langchain.agents import create_agent
 
@@ -111,7 +111,7 @@ def _build_agent(model: Any, tool: NiriumX402Tool):
             return None
 
 
-def _print_safe_result(result: Any, tool: NiriumX402Tool) -> None:
+def _print_safe_result(result: Any, tool: VeyraX402Tool) -> None:
     messages = result.get("messages") if isinstance(result, dict) else None
     if messages:
         last = messages[-1]
@@ -141,7 +141,7 @@ def main() -> int:
     url = _premium_url()
     model = _live_model() if os.getenv("OPENAI_API_KEY") else _scripted_model(url)
     prompt = (
-        "Call the Nirium x402 tool and fetch the protected resource at "
+        "Call the Veyra x402 tool and fetch the protected resource at "
         f"{url}. Summarize the paid response."
     )
     agent = _build_agent(model, tool)

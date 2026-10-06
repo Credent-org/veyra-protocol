@@ -1,4 +1,4 @@
-﻿# Express x402 example
+# Express x402 example
 
 This example starts a small Express API with one x402-protected route for Stellar testnet.
 
@@ -43,10 +43,10 @@ Expected result before payment: HTTP `402 Payment Required` with x402 payment re
 
 ## Paid client smoke test
 
-Use an x402 client configured for Stellar testnet and retry the same route with payment. For example, a client can initialize the Nirium SDK x402 helper with a testnet secret key, then call the protected route:
+Use an x402 client configured for Stellar testnet and retry the same route with payment. For example, a client can initialize the Veyra SDK x402 helper with a testnet secret key, then call the protected route:
 
 ```ts
-import { Agent } from 'nirium'
+import { Agent } from 'veyra'
 
 const agent = new Agent({ apiKey: 'demo', baseUrl: 'http://localhost:3402' })
 agent.initX402({

@@ -3,7 +3,7 @@
  *
  * The real `MppChargeClient.ts` imports `@stellar/mpp/charge/client` and
  * `mppx/client`, whose subpaths have moved in the `@stellar/mpp` version
- * `nirium` (a package this example legitimately also depends on) pulls in,
+ * `veyra` (a package this example legitimately also depends on) pulls in,
  * so those two specific packages can't be resolved together in one
  * dependency tree right now — a real transitive version conflict between
  * two otherwise-unrelated dependencies, not something worth vendoring a

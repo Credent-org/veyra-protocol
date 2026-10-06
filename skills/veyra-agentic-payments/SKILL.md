@@ -1,35 +1,35 @@
 ---
-name: nirium-agentic-payments
+name: veyra-agentic-payments
 description: >-
   Scaffold and run an x402 paid API server on Stellar with open-source
   client libraries: charge AI agents per API call with x402Serve(), a
-  function from the nirium SDK that runs entirely on your own server,
-  scaffold that server with nirium-cli in one command, and separately
-  read live protocol data through the nirium-mcp server. Use when the
+  function from the veyra SDK that runs entirely on your own server,
+  scaffold that server with veyra-cli in one command, and separately
+  read live protocol data through the veyra-mcp server. Use when the
   user wants to charge AI agents for API access on Stellar, needs a
   working x402 seller in minutes without hand-rolling the facilitator
   client, or wants an MCP-connected agent to read market state / control
   an autonomous loop on a running Stellar agent.
 license: Apache-2.0
 metadata:
-  homepage: https://nirium.xyz
-  repository: https://github.com/nirium-protocol/nirium-sdk
+  homepage: https://veyra.xyz
+  repository: https://github.com/veyra-protocol/veyra-sdk
 ---
 
-# Nirium: charge AI agents and read live signals on Stellar
+# Veyra: charge AI agents and read live signals on Stellar
 
-Nirium publishes open-source client libraries for x402 agentic payments
+Veyra publishes open-source client libraries for x402 agentic payments
 on Stellar — a TypeScript/Python SDK, a scaffolding CLI, and an MCP
 server. `x402Serve()`, the function these scaffold around, runs on
-**your own server**: Nirium doesn't operate, host, or route through
+**your own server**: Veyra doesn't operate, host, or route through
 anything in that path, and never sees your end users' requests. It's
-not a demo — Nirium's own mainnet endpoint, running the identical
+not a demo — Veyra's own mainnet endpoint, running the identical
 function, has been billing real USDC over x402 since 9 July 2026. A
 mainnet settlement from that day, verifiable on Stellar Expert:
 [`3134a51c…7558bc`](https://stellar.expert/explorer/public/tx/3134a51c66091fd7fbd85b38a4a6ec6cd432bb92c2450eac84ea7855cb7558bc).
 
 **You're responsible for your own compliance.** `x402Serve()` is a
-general-purpose library, not a service Nirium provides to your end
+general-purpose library, not a service Veyra provides to your end
 users — you choose what to charge for, who `payTo` is, and which
 jurisdiction you operate in. You remain solely responsible for
 complying with the financial, tax, and consumer-protection laws that
@@ -40,8 +40,8 @@ apply to your own use of it.
 ### 1. Scaffold a paid API in one command
 
 ```bash
-npm install -g nirium-cli
-nirium create x402 --name my-paid-api
+npm install -g veyra-cli
+veyra create x402 --name my-paid-api
 cd my-paid-api && npm install
 ```
 
@@ -63,11 +63,11 @@ npm run dev
 ### 2. Charge per request with `x402Serve()`
 
 The scaffolded server is about ten lines because `x402Serve()`, from the
-[`nirium`](https://www.npmjs.com/package/nirium) SDK, carries the
+[`veyra`](https://www.npmjs.com/package/veyra) SDK, carries the
 facilitator client, the scheme registration, and the route table:
 
 ```ts
-import { x402Serve } from 'nirium';
+import { x402Serve } from 'veyra';
 
 app.use('/premium', x402Serve({
     payTo: 'G...',
@@ -78,20 +78,20 @@ app.use('/premium', x402Serve({
 A caller without payment gets a 402 carrying the terms; one that pays
 gets the data, and the USDC transfer settles on Stellar before your
 handler returns. No subscription, no card, no invoice, no human in the
-middle. This is the exact pattern Nirium's own mainnet endpoint runs in
+middle. This is the exact pattern Veyra's own mainnet endpoint runs in
 production against real callers — see the devlog for a real incident
-(and its fix) from operating it at scale: [docs/devlog.md](https://github.com/nirium-protocol/nirium-sdk/blob/main/docs/devlog.md).
+(and its fix) from operating it at scale: [docs/devlog.md](https://github.com/veyra-protocol/veyra-sdk/blob/main/docs/devlog.md).
 
-Optional, off by default: set `NIRIUM_X402SERVE_TELEMETRY=true` if you
-want to send Nirium a non-blocking usage ping (your `payTo`, a
+Optional, off by default: set `VEYRA_X402SERVE_TELEMETRY=true` if you
+want to send Veyra a non-blocking usage ping (your `payTo`, a
 SHA-256 hash of your `facilitatorApiKey` — never the key itself,
 network, route/request counts, SDK version). It never affects a
 payment either way, on or off.
 
-### 3. Read live protocol data with `nirium-mcp`
+### 3. Read live protocol data with `veyra-mcp`
 
 ```bash
-npx nirium-mcp
+npx veyra-mcp
 ```
 
 Claude Desktop / Cursor MCP config:
@@ -99,10 +99,10 @@ Claude Desktop / Cursor MCP config:
 ```json
 {
   "mcpServers": {
-    "nirium": {
+    "veyra": {
       "command": "npx",
-      "args": ["-y", "nirium-mcp"],
-      "env": { "AGENT_API_URL": "https://nirium-agent-mainnet.fly.dev" }
+      "args": ["-y", "veyra-mcp"],
+      "env": { "AGENT_API_URL": "https://veyra-agent-mainnet.fly.dev" }
     }
   }
 }
@@ -126,18 +126,18 @@ cannot serve. Don't tell a user these settle on mainnet; they do not yet.
 ### Alternative: scaffold a standalone signal listener (no MCP client needed)
 
 ```bash
-nirium create bot --name my-agent          # TypeScript
-nirium create bot --name my-agent -t py    # Python
+veyra create bot --name my-agent          # TypeScript
+veyra create bot --name my-agent -t py    # Python
 ```
 
-Connects directly to a Nirium agent and prints incoming signals from
-its autonomous loop. Defaults to the testnet agent; set `NIRIUM_API_URL`
-and `NIRIUM_API_KEY` in `.env` to point elsewhere.
+Connects directly to a Veyra agent and prints incoming signals from
+its autonomous loop. Defaults to the testnet agent; set `VEYRA_API_URL`
+and `VEYRA_API_KEY` in `.env` to point elsewhere.
 
 ## Reference
 
-- SDK + CLI + MCP source, examples: [github.com/nirium-protocol/nirium-sdk](https://github.com/nirium-protocol/nirium-sdk)
-- CLI: [npmjs.com/package/nirium-cli](https://www.npmjs.com/package/nirium-cli)
-- MCP server: [npmjs.com/package/nirium-mcp](https://www.npmjs.com/package/nirium-mcp)
-- TypeScript SDK: [npmjs.com/package/nirium](https://www.npmjs.com/package/nirium) · Python: [pypi.org/project/nirium](https://pypi.org/project/nirium/)
+- SDK + CLI + MCP source, examples: [github.com/veyra-protocol/veyra-sdk](https://github.com/veyra-protocol/veyra-sdk)
+- CLI: [npmjs.com/package/veyra-cli](https://www.npmjs.com/package/veyra-cli)
+- MCP server: [npmjs.com/package/veyra-mcp](https://www.npmjs.com/package/veyra-mcp)
+- TypeScript SDK: [npmjs.com/package/veyra](https://www.npmjs.com/package/veyra) · Python: [pypi.org/project/veyra](https://pypi.org/project/veyra/)
 - Facilitator API key (required for `x402Serve()`): [channels.openzeppelin.com/gen](https://channels.openzeppelin.com/gen)

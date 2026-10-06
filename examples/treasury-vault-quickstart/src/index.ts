@@ -2,7 +2,7 @@
  * Non-custodial treasury vault quickstart.
  *
  * Loop (every on-chain step):
- *   1. Agent builds an UNSIGNED XDR  — Nirium never sees a private key
+ *   1. Agent builds an UNSIGNED XDR  — Veyra never sees a private key
  *   2. This process signs it with YOUR testnet keypair
  *   3. Agent.submitTreasuryTx broadcasts the signed XDR
  *
@@ -12,14 +12,14 @@
 import 'dotenv/config';
 
 import { Horizon } from '@stellar/stellar-sdk';
-import { Agent } from 'nirium';
+import { Agent } from 'veyra';
 
 import { attachBearerIfJwt, resolveApiKey } from './auth.ts';
 import { explainFailure } from './errors.ts';
 import { publicKeyFromSecret, resolveTestnetPassphrase, signUnsignedXdr } from './sign.ts';
 import { ensureUsdcTrustline, missingUsdcError, requiredUsdc, usdcBalance } from './usdc.ts';
 
-const DEFAULT_BASE_URL = 'https://nirium-agent.fly.dev';
+const DEFAULT_BASE_URL = 'https://veyra-agent.fly.dev';
 const HORIZON_TESTNET = 'https://horizon-testnet.stellar.org';
 const FRIENDBOT = 'https://friendbot.stellar.org';
 const MIN_XLM = 10;
@@ -60,9 +60,9 @@ async function main(): Promise<void> {
     const passphrase = resolveTestnetPassphrase(process.env.NETWORK_PASSPHRASE);
     const caller = publicKeyFromSecret(secret);
     const manager = process.env.VAULT_MANAGER?.trim() || caller;
-    const baseUrl = (process.env.NIRIUM_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/$/, '');
+    const baseUrl = (process.env.VEYRA_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/$/, '');
 
-    console.log('Nirium treasury vault quickstart (testnet, non-custodial)');
+    console.log('Veyra treasury vault quickstart (testnet, non-custodial)');
     console.log(`  caller / signer: ${caller}`);
     console.log(`  manager:         ${manager}`);
     console.log(`  agent:           ${baseUrl}`);
@@ -79,7 +79,7 @@ async function main(): Promise<void> {
 
     const info = (await agent.getTreasuryInfo()) as unknown as TreasuryInfo;
     if (info.network && info.network !== 'testnet') {
-        throw new Error(`Agent is on "${info.network}", not testnet. Point NIRIUM_BASE_URL at the testnet agent.`);
+        throw new Error(`Agent is on "${info.network}", not testnet. Point VEYRA_BASE_URL at the testnet agent.`);
     }
     console.log(`  custody model:   ${info.signing ?? 'Every endpoint returns an unsigned XDR.'}`);
 
@@ -170,7 +170,7 @@ function requireTestnetSecret(): string {
     if (!secret) {
         throw new Error(
             'Set STELLAR_SECRET_KEY in .env to your own funded testnet secret (S...).\n' +
-                'This value is used only to sign locally — it is never sent to Nirium.',
+                'This value is used only to sign locally — it is never sent to Veyra.',
         );
     }
     if (secret.startsWith('G')) {

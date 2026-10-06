@@ -32,7 +32,7 @@ export function wrongPassphraseError(got: string): Error {
 }
 
 /**
- * Sign an unsigned XDR with the caller's own keypair. The Nirium Agent is
+ * Sign an unsigned XDR with the caller's own keypair. The Veyra Agent is
  * not involved — the secret never leaves this process.
  */
 export function signUnsignedXdr(xdr: string, secret: string, passphrase: string): string {

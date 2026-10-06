@@ -1,22 +1,22 @@
-import { Agent } from "nirium";
+import { Agent } from "veyra";
 
-import { withNiriumX402 } from "../../../lib/nirium-x402-seller";
+import { withVeyraX402 } from "../../../lib/veyra-x402-seller";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const agent = new Agent({
-  apiKey: process.env.NIRIUM_API_KEY ?? "",
-  baseUrl: process.env.NIRIUM_BASE_URL ?? "https://nirium-agent.fly.dev",
+  apiKey: process.env.VEYRA_API_KEY ?? "",
+  baseUrl: process.env.VEYRA_BASE_URL ?? "https://veyra-agent.fly.dev",
 });
 
-export const GET = withNiriumX402(
+export const GET = withVeyraX402(
   {
-    network: process.env.NIRIUM_X402_NETWORK ?? "stellar:testnet",
-    priceUsdc: process.env.NIRIUM_X402_PRICE_USDC ?? "0.02",
-    payTo: process.env.NIRIUM_X402_PAY_TO ?? "",
+    network: process.env.VEYRA_X402_NETWORK ?? "stellar:testnet",
+    priceUsdc: process.env.VEYRA_X402_PRICE_USDC ?? "0.02",
+    payTo: process.env.VEYRA_X402_PAY_TO ?? "",
     resource: "/api/premium/signals",
-    description: "Nirium premium market signals",
+    description: "Veyra premium market signals",
   },
   async () => {
     const { signals } = await agent.getRecentSignals(5);

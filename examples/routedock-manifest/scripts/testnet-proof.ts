@@ -4,7 +4,7 @@
  * against real Stellar testnet infrastructure — no mocks, no simulation.
  *
  * Required env (see .env.example):
- *   NIRIUM_ROUTEDOCK_PAYEE_SECRET  — demo payee's testnet secret (S...)
+ *   VEYRA_ROUTEDOCK_PAYEE_SECRET  — demo payee's testnet secret (S...)
  *   FACILITATOR_API_KEY            — free key from channels.openzeppelin.com/testnet/gen
  *   BUYER_SECRET                   — a second, funded testnet secret (S...) with a USDC trustline
  *
@@ -30,7 +30,7 @@ import type { RouteDockManifest } from '../vendor/routedock/src/types.ts';
 const schema: Record<string, unknown> = routedockSchema;
 
 async function main() {
-    const payeeSecret = requireEnv('NIRIUM_ROUTEDOCK_PAYEE_SECRET');
+    const payeeSecret = requireEnv('VEYRA_ROUTEDOCK_PAYEE_SECRET');
     const facilitatorApiKey = requireEnv('FACILITATOR_API_KEY');
     const buyerSecret = requireEnv('BUYER_SECRET');
 
@@ -40,7 +40,7 @@ async function main() {
     const app = createApp({
         payeeSecret,
         x402Network: 'stellar:testnet',
-        priceUsdc: process.env.NIRIUM_X402_PRICE_USDC ?? '0.02',
+        priceUsdc: process.env.VEYRA_X402_PRICE_USDC ?? '0.02',
         facilitatorApiKey,
     });
 

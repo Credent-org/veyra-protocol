@@ -110,7 +110,7 @@ export function verifyAuditDocument(doc: AuditDocument, cid?: string): VerifyRes
   if (doc.agent && doc.agent.key && doc.agent.signature) {
     signerKey = doc.agent.key;
     agentId = doc.agent.id;
-    statement = `nirium-audit-v1:${computedHash}`;
+    statement = `veyra-audit-v1:${computedHash}`;
     declaredStatement = doc.agent.statement;
 
     const isValidSig = verifyEd25519Signature(signerKey, statement, doc.agent.signature);

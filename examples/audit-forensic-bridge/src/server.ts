@@ -1,5 +1,5 @@
 import express from 'express';
-import { Agent } from 'nirium';
+import { Agent } from 'veyra';
 import { signAuditRecord } from './attestation.js';
 import dotenv from 'dotenv';
 
@@ -10,12 +10,12 @@ app.use(express.json());
 
 const PORT = Number(process.env.PORT) || 3000;
 const AGENT_SECRET = process.env.STELLAR_SECRET_KEY;
-const NIRIUM_API_KEY = process.env.NIRIUM_API_KEY || 'nrm_test_key';
-const NIRIUM_BASE_URL = process.env.NIRIUM_BASE_URL || 'http://localhost:3001';
+const VEYRA_API_KEY = process.env.VEYRA_API_KEY || 'nrm_test_key';
+const VEYRA_BASE_URL = process.env.VEYRA_BASE_URL || 'http://localhost:3001';
 
 const agentClient = new Agent({
-  apiKey: NIRIUM_API_KEY,
-  baseUrl: NIRIUM_BASE_URL,
+  apiKey: VEYRA_API_KEY,
+  baseUrl: VEYRA_BASE_URL,
 });
 
 app.post('/webhook', async (req, res) => {

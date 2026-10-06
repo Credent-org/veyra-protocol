@@ -1,7 +1,7 @@
 /**
  * NOT vendored from RouteDock — see PROVENANCE.md and the sibling
  * MppChargeClient.ts for why (a real `@stellar/mpp`/`mppx` subpath version
- * conflict against `nirium`'s own dependency tree, for a mode this example
+ * conflict against `veyra`'s own dependency tree, for a mode this example
  * never exercises).
  *
  * `RouteDockClient`'s constructor instantiates this unconditionally, but

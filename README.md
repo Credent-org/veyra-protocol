@@ -1,38 +1,38 @@
-# Nirium
+# Veyra
 
 Open-source autonomous treasury and agentic payments (x402/MPP) for Stellar/Soroban.
 
 This repository contains the TypeScript and Python SDKs, the MCP server, the CLI, examples and quickstarts that let any developer:
 
 - **Get paid by AI agents**: put your own API behind an x402 pay-gate in one call with `x402Serve()`, or pay for someone else's with `initX402()`.
-- **Automate on-chain treasury**: a Nirium agent moves idle capital into a CETES strategy (tokenized Mexican T-bills via Etherfuse) and back, over a vault **you** own. The agent can propose a rebalance without ever holding a signing key; autonomous execution on mainnet (the agent signs) is invite-only while a legal review closes.
+- **Automate on-chain treasury**: a Veyra agent moves idle capital into a CETES strategy (tokenized Mexican T-bills via Etherfuse) and back, over a vault **you** own. The agent can propose a rebalance without ever holding a signing key; autonomous execution on mainnet (the agent signs) is invite-only while a legal review closes.
 - **Anchor immutable audit trails**: SHA-256 content hash pinned to IPFS, optionally carrying an ed25519 signature that proves *who* declared the fact, not just that it is unaltered.
 
-Software-only and non-custodial: regulated partners execute settlement, the client signs every fund movement, and Nirium never holds client funds.
+Software-only and non-custodial: regulated partners execute settlement, the client signs every fund movement, and Veyra never holds client funds.
 
 ## Packages
 
 | Package | Install | Version | Description |
 |---|---|---|---|
-| TypeScript SDK | `npm install nirium` | [![npm](https://img.shields.io/npm/v/nirium)](https://www.npmjs.com/package/nirium) | Client for the Nirium API, x402/MPP payments, signals, webhooks, plus `x402Serve()` to charge for your own API. |
-| Python SDK | `pip install nirium` · `pip install 'nirium[langchain]'` | [![PyPI](https://img.shields.io/pypi/v/nirium)](https://pypi.org/project/nirium/) | Async client with the same surface, plus `NiriumX402Tool` for LangChain agents. |
-| MCP server | `npx nirium-mcp` | [![npm](https://img.shields.io/npm/v/nirium-mcp)](https://www.npmjs.com/package/nirium-mcp) | 25 tools for Claude Desktop, Cursor, and any MCP-compatible IDE. |
-| CLI | `npm install -g nirium-cli` | [![npm](https://img.shields.io/npm/v/nirium-cli)](https://www.npmjs.com/package/nirium-cli) | Scaffold and interact with Nirium from the terminal. |
+| TypeScript SDK | `npm install veyra` | [![npm](https://img.shields.io/npm/v/veyra)](https://www.npmjs.com/package/veyra) | Client for the Veyra API, x402/MPP payments, signals, webhooks, plus `x402Serve()` to charge for your own API. |
+| Python SDK | `pip install veyra` · `pip install 'veyra[langchain]'` | [![PyPI](https://img.shields.io/pypi/v/veyra)](https://pypi.org/project/veyra/) | Async client with the same surface, plus `VeyraX402Tool` for LangChain agents. |
+| MCP server | `npx veyra-mcp` | [![npm](https://img.shields.io/npm/v/veyra-mcp)](https://www.npmjs.com/package/veyra-mcp) | 25 tools for Claude Desktop, Cursor, and any MCP-compatible IDE. |
+| CLI | `npm install -g veyra-cli` | [![npm](https://img.shields.io/npm/v/veyra-cli)](https://www.npmjs.com/package/veyra-cli) | Scaffold and interact with Veyra from the terminal. |
 
-> The source in `packages/` matches what is published. The two SDKs share full Treasury parity (12 methods, `proposeTreasuryRebalance()`/`propose_treasury_rebalance()` included). `x402Serve()` stays TypeScript-only — it's Express middleware, server-side Node, with no meaningful equivalent in an async Python client. Going the other way, Python ships a resilient, auto-reconnecting WebSocket client (backoff, jitter, dedup) and a LangChain `BaseTool` (`pip install nirium[langchain]`) that TypeScript doesn't have yet — the version gap runs both directions, not just one.
+> The source in `packages/` matches what is published. The two SDKs share full Treasury parity (12 methods, `proposeTreasuryRebalance()`/`propose_treasury_rebalance()` included). `x402Serve()` stays TypeScript-only — it's Express middleware, server-side Node, with no meaningful equivalent in an async Python client. Going the other way, Python ships a resilient, auto-reconnecting WebSocket client (backoff, jitter, dedup) and a LangChain `BaseTool` (`pip install veyra[langchain]`) that TypeScript doesn't have yet — the version gap runs both directions, not just one.
 
-Signing with a social-login wallet instead of a raw keypair? See [`nirium-pollar-adapter`](https://github.com/nirium-protocol/nirium-pollar-adapter), a separate package that adapts [Pollar](https://pollar.xyz)'s embedded-wallet SDK to sign x402 payments and audit records through this SDK.
+Signing with a social-login wallet instead of a raw keypair? See [`veyra-pollar-adapter`](https://github.com/veyra-protocol/veyra-pollar-adapter), a separate package that adapts [Pollar](https://pollar.xyz)'s embedded-wallet SDK to sign x402 payments and audit records through this SDK.
 
 ## Quickstart: pay for an API (TypeScript)
 
 ```bash
-npm install nirium
+npm install veyra
 ```
 
 ```ts
-import { Agent } from 'nirium';
+import { Agent } from 'veyra';
 
-const agent = new Agent({ baseUrl: 'https://nirium-agent.fly.dev' });
+const agent = new Agent({ baseUrl: 'https://veyra-agent.fly.dev' });
 const market = await agent.getMarket();
 console.log(market);
 ```
@@ -42,7 +42,7 @@ console.log(market);
 The other side of the counter. Wiring x402 by hand is ~25 lines of facilitator client, per-method auth headers, per-network scheme registration and a route table whose shape you have to reverse-engineer. This is the same thing with the defaults that already run in production:
 
 ```ts
-import { x402Serve } from 'nirium';
+import { x402Serve } from 'veyra';
 
 app.use('/premium', x402Serve({
     payTo: 'G...',              // your Stellar address
@@ -55,7 +55,7 @@ Any AI agent can now pay for your endpoint in USDC: no account, no card, no subs
 > **Known limitation:** `x402Serve()` verifies and settles the payment; it does
 > not deduplicate a payment proof across requests or rate-limit callers on its
 > own. Add your own protection if you need either (see
-> [issue #91](https://github.com/nirium-protocol/nirium/issues/91) for what's
+> [issue #91](https://github.com/veyra-protocol/veyra/issues/91) for what's
 > missing and why, and for a real production reference implementation).
 
 See [`docs/`](./docs) for full quickstarts, including [**"Charge AI agents in 5 minutes"**](./docs/quickstart-x402.md), and [`examples/`](./examples) for 12 runnable integrations across 4 languages: [Express](./examples/express-x402) and [Next.js](./examples/nextjs-x402) (TypeScript), [Go](./examples/go-x402), [Rust](./examples/rust-x402), [LangChain x402](./examples/langchain-x402-agent), [non-custodial treasury vault](./examples/treasury-vault-quickstart), [resilient WebSocket signals](./examples/ws-signals-resilient), [one-click Vercel deploy](./examples/deploy-x402-vercel), [Unity/C# game paywall](./examples/unity-game-x402-gate), [RouteDock discovery manifest](./examples/routedock-manifest), [Stellar Disbursement Platform audit bridge](./examples/sdp-audit-bridge), and [audit-forensic-bridge](./examples/audit-forensic-bridge). For real production findings (not marketing copy), see the [**devlog**](./docs/devlog.md).
@@ -64,7 +64,7 @@ See [`docs/`](./docs) for full quickstarts, including [**"Charge AI agents in 5 
 
 Live on **both** Stellar networks. They are not two copies of the same thing.
 
-> **Settlement note (proposal, not a demand):** because nirium already speaks
+> **Settlement note (proposal, not a demand):** because veyra already speaks
 > x402 (`x402Serve()`/`initX402()`), the same exact-scheme flow can also
 > settle **fee-free in Nano (XNO)** — instant finality, no gas, fully
 > self-custodied (no freezeable stablecoin). At agent micropayment prices the
@@ -85,24 +85,24 @@ Live on **both** Stellar networks. They are not two copies of the same thing.
 | First real x402 payment | [`3134a51c…7558bc`](https://stellar.expert/explorer/public/tx/3134a51c66091fd7fbd85b38a4a6ec6cd432bb92c2450eac84ea7855cb7558bc) |
 | Treasury vault deployed (client signs) | [`93ff6284…78416`](https://stellar.expert/explorer/public/tx/93ff6284cdf03706624c88434a79fba1b213ee547f58e09a9248f75373178416) |
 | Autonomous invest (**the agent signs**) | [`82d73f53…6b3d4`](https://stellar.expert/explorer/public/tx/82d73f537e907140367f9343f63a36704c74a5286aced7a938cee8fffb56b3d4) |
-| API | [`nirium-agent-mainnet.fly.dev/health`](https://nirium-agent-mainnet.fly.dev/health) |
+| API | [`veyra-agent-mainnet.fly.dev/health`](https://veyra-agent-mainnet.fly.dev/health) |
 
-That third transaction is the point: the agent moved funds it does not own, and the contract gave it no way to take them out. Nirium holds only the vault's `RebalanceManager` role, and `rebalance()` accepts no destination address: withdrawal is not *forbidden*, it is **inexpressible**.
+That third transaction is the point: the agent moved funds it does not own, and the contract gave it no way to take them out. Veyra holds only the vault's `RebalanceManager` role, and `rebalance()` accepts no destination address: withdrawal is not *forbidden*, it is **inexpressible**.
 
 **Testnet** (no real value, where the loop and the key live, and where you should build).
 
 | Contract | ID |
 |---|---|
-| NiriumVault | [`CBTWMZCG3P72EHFAQ4ZLSEBIOFYJC244H5J6DHZIJ56FHFWJ2CFAWSZU`](https://stellar.expert/explorer/testnet/contract/CBTWMZCG3P72EHFAQ4ZLSEBIOFYJC244H5J6DHZIJ56FHFWJ2CFAWSZU) |
-| NiriumProtocol | [`CC2TU5BDTKTPRRRQPEF77I54XYHFQ25XGIRO2TCWKSR7NRJDFR5L5NR5`](https://stellar.expert/explorer/testnet/contract/CC2TU5BDTKTPRRRQPEF77I54XYHFQ25XGIRO2TCWKSR7NRJDFR5L5NR5) |
+| VeyraVault | [`CBTWMZCG3P72EHFAQ4ZLSEBIOFYJC244H5J6DHZIJ56FHFWJ2CFAWSZU`](https://stellar.expert/explorer/testnet/contract/CBTWMZCG3P72EHFAQ4ZLSEBIOFYJC244H5J6DHZIJ56FHFWJ2CFAWSZU) |
+| VeyraProtocol | [`CC2TU5BDTKTPRRRQPEF77I54XYHFQ25XGIRO2TCWKSR7NRJDFR5L5NR5`](https://stellar.expert/explorer/testnet/contract/CC2TU5BDTKTPRRRQPEF77I54XYHFQ25XGIRO2TCWKSR7NRJDFR5L5NR5) |
 
-API: [`nirium-agent.fly.dev/health`](https://nirium-agent.fly.dev/health) · node catalog: [`/api/nodes`](https://nirium-agent.fly.dev/api/nodes)
+API: [`veyra-agent.fly.dev/health`](https://veyra-agent.fly.dev/health) · node catalog: [`/api/nodes`](https://veyra-agent.fly.dev/api/nodes)
 
-Nirium's own **NiriumVault** treasury contract stays on testnet and is audit-gated: no independent third-party audit has happened yet, and no client funds ever reach it. The mainnet treasury path runs over a **DeFindex** vault instead: a third-party contract audited by OtterSec (March 2025, 16 findings, all 13 vulnerabilities resolved) on a Blend V2 strategy.
+Veyra's own **VeyraVault** treasury contract stays on testnet and is audit-gated: no independent third-party audit has happened yet, and no client funds ever reach it. The mainnet treasury path runs over a **DeFindex** vault instead: a third-party contract audited by OtterSec (March 2025, 16 findings, all 13 vulnerabilities resolved) on a Blend V2 strategy.
 
 ## External validation
 
-Live usage, read from Horizon/npm/PyPI/GitHub: https://nirium.xyz/stats
+Live usage, read from Horizon/npm/PyPI/GitHub: https://veyra.xyz/stats
 
 Real bugs found in code we don't control, in other people's repos, confirmed by maintainers with no reason to agree if they weren't real.
 
@@ -112,7 +112,7 @@ Real bugs found in code we don't control, in other people's repos, confirmed by 
 
 **[stellar/stellar-mpp-sdk#69](https://github.com/stellar/stellar-mpp-sdk/pull/69)** — `@stellar/mpp`'s exported `USDC_SAC_MAINNET` (54 chars) and `XLM_SAC_MAINNET` (55 chars) both fail `StrKey.isValidEd25519PublicKey()` — invalid addresses, present in every version including 0.7.1. Filed with the exact byte counts and correct addresses; PR merged the **same day**. Our own `USDC_SAC_OVERRIDE` workaround (`middleware/mpp.ts`) stays until a release actually ships the fix.
 
-**[Trustless-Work/agentic-escrow-research](https://github.com/Trustless-Work/agentic-escrow-research)** — 4 PRs merged (#1–#4), all 4 within a 27-minute window, 21-sep-2026: bounded-authority milestone payouts, treasury rebalancing via a destination parameter that doesn't exist, direct x402 payment without escrow with real settlement verified on mainnet, and production evidence for their agentic-tool schema. Trustless Work thanked us publicly from their own account: *"We just merged our first 4 community contributions 🙏 @vaiossx @smithserrat @Niriumstellar."*
+**[Trustless-Work/agentic-escrow-research](https://github.com/Trustless-Work/agentic-escrow-research)** — 4 PRs merged (#1–#4), all 4 within a 27-minute window, 21-sep-2026: bounded-authority milestone payouts, treasury rebalancing via a destination parameter that doesn't exist, direct x402 payment without escrow with real settlement verified on mainnet, and production evidence for their agentic-tool schema. Trustless Work thanked us publicly from their own account: *"We just merged our first 4 community contributions 🙏 @vaiossx @smithserrat @Veyrastellar."*
 
 **[stellar/js-stellar-sdk#1655](https://github.com/stellar/js-stellar-sdk/issues/1655)** (and the related [#1681](https://github.com/stellar/js-stellar-sdk/issues/1681), [#1683](https://github.com/stellar/js-stellar-sdk/issues/1683), [#1700](https://github.com/stellar/js-stellar-sdk/issues/1700)) — real bugs and gaps in the SDK's delegate-signing path (`needsNonInvokerSigningBy()`/`signAuthEntries()`/`authorizeEntry()` weren't walking CAP-71 delegate trees correctly, or verifying signers other than the root node). #1655 fixed by the maintainer's [PR #1747](https://github.com/stellar/js-stellar-sdk/pull/1747); #1683 fixed by [PR #1742](https://github.com/stellar/js-stellar-sdk/pull/1742); #1681 fixed by two separate PRs, [#1743](https://github.com/stellar/js-stellar-sdk/pull/1743) and [#1744](https://github.com/stellar/js-stellar-sdk/pull/1744), closed by us once both merged. #1700 was closed after a docs-only PR, [#1745](https://github.com/stellar/js-stellar-sdk/pull/1745), documented the reported gap as a known limitation rather than changing behavior — real acknowledgment, not a code fix. The maintainer kept building on this thread in a follow-up feature request of their own ([#1759](https://github.com/stellar/js-stellar-sdk/issues/1759)). A fifth report from the same round, [#1699](https://github.com/stellar/js-stellar-sdk/issues/1699), we withdrew ourselves after our own fix attempt against the full test suite showed the behavior was intentional, not a bug — closed `not_planned`, never fixed, reported honestly rather than folded into the count above.
 
@@ -124,7 +124,7 @@ Full history, including findings still open, in the [devlog](./docs/devlog.md).
 
 ## Funding
 
-Nirium received Stellar Community Fund Instaward funding (two awards) via a regional Stellar Ambassador chapter, with full KYC complete (Airtable + Persona + W-8BEN). Instaward is SCF's early-stage program for prototyping and local validation, up to $15,000 per project. More info: [communityfund.stellar.org](https://communityfund.stellar.org). This isn't independently verifiable by API the way the findings above are — it's the program's own award record, not a third-party confirmation.
+Veyra received Stellar Community Fund Instaward funding (two awards) via a regional Stellar Ambassador chapter, with full KYC complete (Airtable + Persona + W-8BEN). Instaward is SCF's early-stage program for prototyping and local validation, up to $15,000 per project. More info: [communityfund.stellar.org](https://communityfund.stellar.org). This isn't independently verifiable by API the way the findings above are — it's the program's own award record, not a third-party confirmation.
 
 ## Contributing
 

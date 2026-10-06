@@ -1,6 +1,6 @@
-# nirium-mcp
+# veyra-mcp
 
-Model Context Protocol server for [Nirium](https://nirium.xyz) — exposes market data, autonomous treasury loop control, and x402/MPP paid endpoints to any MCP-compatible AI: Claude, GPT, Cursor, VS Code Copilot, and others.
+Model Context Protocol server for [Veyra](https://veyra.xyz) — exposes market data, autonomous treasury loop control, and x402/MPP paid endpoints to any MCP-compatible AI: Claude, GPT, Cursor, VS Code Copilot, and others.
 
 Software-only. This server never holds funds — paid tools sign per-request payments from a Stellar wallet you control via `STELLAR_SECRET_KEY`.
 
@@ -13,20 +13,20 @@ No install needed — run directly with `npx`, or add to your MCP client config.
 ```json
 {
   "mcpServers": {
-    "nirium": {
+    "veyra": {
       "command": "npx",
-      "args": ["-y", "nirium-mcp"],
+      "args": ["-y", "veyra-mcp"],
       "env": {
-        "AGENT_API_URL": "https://nirium-agent.fly.dev",
+        "AGENT_API_URL": "https://veyra-agent.fly.dev",
         "STELLAR_SECRET_KEY": "S...",
-        "NIRIUM_API_KEY": "sk_free_..."
+        "VEYRA_API_KEY": "sk_free_..."
       }
     }
   }
 }
 ```
 
-`STELLAR_SECRET_KEY` and `NIRIUM_API_KEY` are optional — omit them and the free tools still work; paid (x402/MPP) and authenticated tools will tell you what's missing instead of failing silently.
+`STELLAR_SECRET_KEY` and `VEYRA_API_KEY` are optional — omit them and the free tools still work; paid (x402/MPP) and authenticated tools will tell you what's missing instead of failing silently.
 
 ## Tools
 
@@ -39,7 +39,7 @@ No install needed — run directly with `npx`, or add to your MCP client config.
 - `anchor_audit_record` — anchor a hash (or a small JSON record) to IPFS, get back a CID
 - `get_reporting_summary` — settled payouts, x402/MPP receipts and anchors for a period
 
-**Authenticated — requires `NIRIUM_API_KEY`**
+**Authenticated — requires `VEYRA_API_KEY`**
 - `start_loop` — start the autonomous scanning loop
 - `stop_loop` — stop it
 
@@ -56,9 +56,9 @@ No install needed — run directly with `npx`, or add to your MCP client config.
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `AGENT_API_URL` | No (defaults to `http://127.0.0.1:3001`) | Nirium agent API base URL |
+| `AGENT_API_URL` | No (defaults to `http://127.0.0.1:3001`) | Veyra agent API base URL |
 | `STELLAR_SECRET_KEY` | For paid tools | Funds x402 and MPP payments |
-| `NIRIUM_API_KEY` | For `start_loop`/`stop_loop` | Agent API key from [nirium.xyz/keys](https://nirium.xyz/keys) |
+| `VEYRA_API_KEY` | For `start_loop`/`stop_loop` | Agent API key from [veyra.xyz/keys](https://veyra.xyz/keys) |
 | `STELLAR_NETWORK` | No (defaults to `testnet`) | `testnet` or `mainnet` |
 | `SOROBAN_RPC_URL` | **Yes on mainnet** | Soroban RPC endpoint. Testnet falls back to the public one; mainnet has no open public RPC, so paid tools stay disabled until you set this. [Providers](https://developers.stellar.org/docs/data/apis/rpc/providers) |
 
@@ -71,8 +71,8 @@ Anchor a **hash** of your data rather than the data itself. IPFS content cannot 
 ## Run from source
 
 ```bash
-git clone https://github.com/nirium-protocol/nirium-sdk
-cd nirium-sdk/packages/mcp
+git clone https://github.com/veyra-protocol/veyra-sdk
+cd veyra-sdk/packages/mcp
 npm install
 STELLAR_SECRET_KEY=S... AGENT_API_URL=http://localhost:3001 npx tsx src/index.ts
 ```

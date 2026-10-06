@@ -1,4 +1,4 @@
-module github.com/nirium-protocol/nirium/examples/go-x402
+module github.com/veyra-protocol/veyra/examples/go-x402
 
 go 1.23
 

@@ -40,7 +40,7 @@ export function hasUsdcTrustline(account: Horizon.AccountResponse): boolean {
     );
 }
 
-/** Open the Blend testnet USDC trustline. Signed locally — Nirium is not involved. */
+/** Open the Blend testnet USDC trustline. Signed locally — Veyra is not involved. */
 export async function ensureUsdcTrustline(secret: string, publicKey: string): Promise<void> {
     const horizon = new Horizon.Server(HORIZON_TESTNET);
     const account = await horizon.loadAccount(publicKey);

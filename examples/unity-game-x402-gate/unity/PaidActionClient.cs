@@ -10,7 +10,7 @@
 // depends on `com.scryingstone.stellar-sdk` and `com.scryingstone.stellar-wallet`.
 //
 // Flow: POST the action with no credential -> read the 402's
-// `payment-required` header (base64 JSON, matching Nirium's x402Serve()
+// `payment-required` header (base64 JSON, matching Veyra's x402Serve()
 // wire format) -> build the unsigned Soroban `transfer` invocation for the
 // requested amount -> sign it -> retry with a PAYMENT-SIGNATURE header ->
 // unlock the JSON result.
@@ -60,7 +60,7 @@ using StellarWallet;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Nirium.Examples.UnityGameX402Gate
+namespace Veyra.Examples.UnityGameX402Gate
 {
     /// <summary>
     /// One loot item unlocked by a successful paid call, mirroring the
@@ -226,7 +226,7 @@ namespace Nirium.Examples.UnityGameX402Gate
             }
 
             // 2) Build the unsigned `transfer(from, to, amount)` invocation on
-            // the requested SAC (see SEP-41) — the same call nirium's own
+            // the requested SAC (see SEP-41) — the same call veyra's own
             // TypeScript x402 client makes (see scripts/wallet-bridge-smoke.ts).
             NetworkContext paymentContext = context;
             paymentContext.contractAddress = accepted.asset;

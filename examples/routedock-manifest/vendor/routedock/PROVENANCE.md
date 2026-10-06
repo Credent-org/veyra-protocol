@@ -35,7 +35,7 @@ signing/validation logic. Nothing under `src/` here has been edited.
 **`src/client/MppChargeClient.ts` and `MppSessionClient.ts` are *not*
 vendored** — each file says so at the top. The real versions import
 `@stellar/mpp/charge/client`, `@stellar/mpp/channel/client`, and `mppx/client`
-subpaths that don't exist in the `@stellar/mpp`/`mppx` versions `nirium`
+subpaths that don't exist in the `@stellar/mpp`/`mppx` versions `veyra`
 (this example's other real dependency) pulls in — a genuine transitive
 version conflict between two unrelated packages, for a mode (`mpp-charge` /
 `mpp-session`) this example's manifest never declares. `RouteDockClient`'s
@@ -62,7 +62,7 @@ header and the settlement receipt from `X-Payment-Response`. The real
 `@x402/core` server — the library `x402Serve()` and RouteDock's own
 `ExactStellarScheme` both build on — actually sets `PAYMENT-REQUIRED` and
 `PAYMENT-RESPONSE` (verified by reading `@x402/core`'s published
-`server/index.js`, by a live probe of `nirium-agent.fly.dev`'s real 402
+`server/index.js`, by a live probe of `veyra-agent.fly.dev`'s real 402
 response, and by running the real, unmodified `x402Serve()` locally in this
 example — all three agree). RouteDock's client therefore cannot complete a
 payment against any standard `@x402/core`-based x402 server as published

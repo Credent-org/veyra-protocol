@@ -15,7 +15,7 @@ import { createApp } from '../src/server.ts';
  * transaction via `@x402/stellar`'s `ExactStellarScheme`, which simulates
  * against a live Soroban RPC endpoint before signing — there is no seam to
  * mock that without reimplementing Soroban RPC's simulation contract, and
- * Nirium's own `x402serve-smoke.test.ts` draws the same line (jest.mock'ing
+ * Veyra's own `x402serve-smoke.test.ts` draws the same line (jest.mock'ing
  * the chain-signing modules rather than exercising them).
  *
  * So this test exercises everything up to and including on-chain signing
@@ -51,7 +51,7 @@ async function startDemoServer() {
     return { server, payee, baseUrl: `http://127.0.0.1:${port}` };
 }
 
-test('RouteDockClient resolves Nirium\'s manifest and selects x402 for the real resource', async () => {
+test('RouteDockClient resolves Veyra\'s manifest and selects x402 for the real resource', async () => {
     const { server, payee, baseUrl } = await startDemoServer();
     try {
         const buyer = Keypair.random();

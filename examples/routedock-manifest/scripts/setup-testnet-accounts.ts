@@ -82,7 +82,7 @@ async function openTrustlineIfNeeded(
 }
 
 async function main() {
-    const payeeSecret = requireEnv('NIRIUM_ROUTEDOCK_PAYEE_SECRET');
+    const payeeSecret = requireEnv('VEYRA_ROUTEDOCK_PAYEE_SECRET');
     const buyerSecret = requireEnv('BUYER_SECRET');
     const payee = Keypair.fromSecret(payeeSecret);
     const buyer = Keypair.fromSecret(buyerSecret);

@@ -2,11 +2,11 @@
 
 ## Reporting a Vulnerability
 
-We take the security of Nirium Protocol seriously. If you believe you have found a security vulnerability, please report it responsibly.
+We take the security of Veyra Protocol seriously. If you believe you have found a security vulnerability, please report it responsibly.
 
 ### How to Report
 
-**Email:** niriumprotocol@gmail.com
+**Email:** veyraprotocol@gmail.com
 
 Please include:
 - Description of the vulnerability
@@ -29,14 +29,14 @@ The following components are in scope for security reports:
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| **NiriumVault** (Soroban) | ✅ Internal review — formal audit pending | Treasury, flash loans, 2-of-3 multisig pause |
+| **VeyraVault** (Soroban) | ✅ Internal review — formal audit pending | Treasury, flash loans, 2-of-3 multisig pause |
 | **Protocol Reputation / ELO** (Soroban) | ✅ Internal review — formal audit pending | Agent ELO scoring (base 1200, K=32) |
 | **Strategy Marketplace** (Soroban) | ✅ Internal review — formal audit pending | CID registry, token-spoofing fix applied |
 | **Protocol Sentinel** (Soroban) | ✅ Internal review — formal audit pending | Agent performance reporting contract |
 | **Settlement Hub** (Soroban) | ✅ Internal review — formal audit pending | MPP session escrow contract |
 | **Skill Vault** (Soroban) | ✅ Internal review — formal audit pending | x402 per-request payment gate |
-| **Frontend** (Next.js 15) | ✅ Internal review passed | Dashboard at nirium.xyz — 25 routes |
-| **API endpoints** (Express 5) | ✅ Internal review passed | 55 endpoints at nirium-agent.fly.dev |
+| **Frontend** (Next.js 15) | ✅ Internal review passed | Dashboard at veyra.xyz — 25 routes |
+| **API endpoints** (Express 5) | ✅ Internal review passed | 55 endpoints at veyra-agent.fly.dev |
 | **Agent scripts** | ✅ Internal review passed | master.ts, swarm, indexer, buyer agents |
 
 ### Out of Scope
@@ -48,7 +48,7 @@ The following components are in scope for security reports:
 
 ## Audit Status
 
-> **⚠️ IMPORTANT: Nirium smart contracts have NOT been formally audited by any third-party security firm.**
+> **⚠️ IMPORTANT: Veyra smart contracts have NOT been formally audited by any third-party security firm.**
 
 The protocol is currently deployed on **Stellar Testnet only** and uses test tokens with no monetary value. A formal third-party audit is planned for Month 3 of operations (Soroban layer via SCF Audit Bank; API/server layer independently funded).
 
@@ -98,9 +98,9 @@ We appreciate the security research community's efforts. Reporters of valid secu
 
 ## Contact
 
-- **Security issues:** niriumprotocol@gmail.com
-- **General inquiries:** niriumprotocol@gmail.com
-- **Twitter/X:** [@NiriumXYZ](https://x.com/Niriumstellar)
+- **Security issues:** veyraprotocol@gmail.com
+- **General inquiries:** veyraprotocol@gmail.com
+- **Twitter/X:** [@VeyraXYZ](https://x.com/Veyrastellar)
 
 ---
 

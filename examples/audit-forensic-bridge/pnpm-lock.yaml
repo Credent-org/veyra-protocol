@@ -17,7 +17,7 @@ importers:
       express:
         specifier: ^5.2.1
         version: 5.2.1
-      nirium:
+      veyra:
         specifier: file:../../packages/sdk
         version: file:../../packages/sdk(debug@4.4.3)(express@5.2.1)(typescript@5.9.3)(zod@4.4.3)
     devDependencies:
@@ -699,7 +699,7 @@ packages:
     resolution: {integrity: sha512-NMPBRMJgiQHjbd8phG3Vebdx4kZ1H121rbl5IkMqeOsahptB9BKo/d7oJ3zTXqTgagn2bWlNSXkh0QUGM31RYg==}
     engines: {node: '>=18'}
 
-  nirium@file:../../packages/sdk:
+  veyra@file:../../packages/sdk:
     resolution: {directory: ../../packages/sdk, type: directory}
 
   object-inspect@1.13.4:
@@ -1585,7 +1585,7 @@ snapshots:
     dependencies:
       content-type: 2.1.0
 
-  nirium@file:../../packages/sdk(debug@4.4.3)(express@5.2.1)(typescript@5.9.3)(zod@4.4.3):
+  veyra@file:../../packages/sdk(debug@4.4.3)(express@5.2.1)(typescript@5.9.3)(zod@4.4.3):
     dependencies:
       '@stellar/mpp': 0.7.1(@stellar/stellar-sdk@14.6.1(debug@4.4.3))(mppx@0.6.31(express@5.2.1)(typescript@5.9.3)(viem@2.55.19(typescript@5.9.3)(zod@4.4.3)))
       '@stellar/stellar-sdk': 14.6.1(debug@4.4.3)

@@ -96,8 +96,8 @@ export async function runAnchorCli(args: readonly string[]): Promise<void> {
   const anchored = await anchorDisbursementBatch({
     descriptor: cli.descriptor,
     ...(horizonUrl ? { horizonUrl } : {}),
-    ...(process.env.NIRIUM_API_URL ? { niriumApiUrl: process.env.NIRIUM_API_URL } : {}),
-    ...(process.env.NIRIUM_API_KEY ? { niriumApiKey: process.env.NIRIUM_API_KEY } : {}),
+    ...(process.env.VEYRA_API_URL ? { veyraApiUrl: process.env.VEYRA_API_URL } : {}),
+    ...(process.env.VEYRA_API_KEY ? { veyraApiKey: process.env.VEYRA_API_KEY } : {}),
     ...(process.env.AUDIT_AGENT_SECRET_KEY
       ? { agentSecretKey: process.env.AUDIT_AGENT_SECRET_KEY }
       : {}),

@@ -9,7 +9,7 @@ import { Keypair } from '@stellar/stellar-sdk';
 import { signManifest, verifyManifestSignature } from '../vendor/routedock/src/manifest/sign.ts';
 import routedockSchema from '../vendor/routedock/src/schemas/routedock.schema.json' with { type: 'json' };
 
-import { buildSignalsManifest, NIRIUM_X402_FACILITATOR, SIGNALS_RESOURCE_PATH } from '../src/manifest.ts';
+import { buildSignalsManifest, VEYRA_X402_FACILITATOR, SIGNALS_RESOURCE_PATH } from '../src/manifest.ts';
 
 // Validates against RouteDock's own real schema — not a local copy of it.
 // Typed as Record<string, unknown> (mirroring RouteDock's own schema.ts)
@@ -60,10 +60,10 @@ test('signature verification rejects a tampered field', () => {
     assert.throws(() => verifyManifestSignature(tampered, payee.publicKey()));
 });
 
-test('manifest declares the real Nirium x402 facilitator and resource path', () => {
+test('manifest declares the real Veyra x402 facilitator and resource path', () => {
     const { manifest } = demoManifest();
 
-    assert.equal(manifest.pricing.x402?.facilitator, NIRIUM_X402_FACILITATOR.testnet);
+    assert.equal(manifest.pricing.x402?.facilitator, VEYRA_X402_FACILITATOR.testnet);
     assert.equal(manifest.endpoints.signals?.path, SIGNALS_RESOURCE_PATH);
     assert.equal(manifest.endpoints.signals?.method, 'GET');
     assert.deepEqual(manifest.modes, ['x402']);

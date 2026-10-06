@@ -1,10 +1,10 @@
-name: Verify Nirium Audit CID
-description: Verify a Nirium audit CID hash and optional Stellar Ed25519 agent attestation.
-author: Nirium
+name: Verify Veyra Audit CID
+description: Verify a Veyra audit CID hash and optional Stellar Ed25519 agent attestation.
+author: Veyra
 
 inputs:
   cid:
-    description: IPFS CID for the Nirium audit document.
+    description: IPFS CID for the Veyra audit document.
     required: true
   gateway:
     description: IPFS gateway base URL. Values ending in /ipfs or /ipfs/ are used directly.

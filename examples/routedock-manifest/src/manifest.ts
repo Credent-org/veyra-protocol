@@ -5,7 +5,7 @@ import type { RouteDockManifest } from '../vendor/routedock/src/types.ts';
 
 export type RouteDockNetwork = 'testnet' | 'mainnet';
 
-export interface NiriumRouteDockConfig {
+export interface VeyraRouteDockConfig {
     /** Stellar network this manifest is served for. Mirrors x402Serve()'s `network`. */
     network: RouteDockNetwork;
     /** Stellar G... address that receives x402 payments — x402Serve()'s `payTo`. */
@@ -15,12 +15,12 @@ export interface NiriumRouteDockConfig {
 }
 
 /**
- * Nirium's `x402Serve()` always resolves to OpenZeppelin Channels when no
+ * Veyra's `x402Serve()` always resolves to OpenZeppelin Channels when no
  * `facilitatorUrl` override is given — see `X402_FACILITATORS` in
  * `packages/sdk/src/index.ts`. Reused here verbatim so the manifest never
  * drifts from what the endpoint actually settles through.
  */
-export const NIRIUM_X402_FACILITATOR: Record<RouteDockNetwork, string> = {
+export const VEYRA_X402_FACILITATOR: Record<RouteDockNetwork, string> = {
     testnet: 'https://channels.openzeppelin.com/x402/testnet',
     mainnet: 'https://channels.openzeppelin.com/x402',
 };
@@ -36,11 +36,11 @@ const USDC_SAC: Record<RouteDockNetwork, string> = {
     mainnet: USDC_PUBNET_ADDRESS,
 };
 
-/** The resource this manifest describes. Confirmed live at `nirium-agent.fly.dev`. */
+/** The resource this manifest describes. Confirmed live at `veyra-agent.fly.dev`. */
 export const SIGNALS_RESOURCE_PATH = '/api/v1/premium/signals';
 
 /**
- * Build the *unsigned* RouteDock discovery manifest for Nirium's
+ * Build the *unsigned* RouteDock discovery manifest for Veyra's
  * `GET /api/v1/premium/signals` x402 endpoint.
  *
  * This only describes an endpoint that `x402Serve()` already protects — it
@@ -48,10 +48,10 @@ export const SIGNALS_RESOURCE_PATH = '/api/v1/premium/signals';
  * how that endpoint charges. Sign the result with `signManifest()` from
  * `@routedock/routedock` before serving it at `/.well-known/routedock.json`.
  */
-export function buildSignalsManifest(config: NiriumRouteDockConfig): RouteDockManifest {
+export function buildSignalsManifest(config: VeyraRouteDockConfig): RouteDockManifest {
     return {
         routedock: '1.0',
-        name: 'Nirium Premium Signals',
+        name: 'Veyra Premium Signals',
         description:
             'Real-time cross-DEX arbitrage signals for Stellar/Soroban DEXes, priced per request and settled over x402.',
         modes: ['x402'],
@@ -63,7 +63,7 @@ export function buildSignalsManifest(config: NiriumRouteDockConfig): RouteDockMa
             x402: {
                 amount: config.priceUsdc,
                 per: 'request',
-                facilitator: NIRIUM_X402_FACILITATOR[config.network],
+                facilitator: VEYRA_X402_FACILITATOR[config.network],
             },
         },
         endpoints: {

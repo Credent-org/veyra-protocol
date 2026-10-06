@@ -60471,9 +60471,9 @@ __nccwpck_require__.d(__webpack_exports__, {
 const promises_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs/promises");
 // EXTERNAL MODULE: external "node:crypto"
 var external_node_crypto_ = __nccwpck_require__(7598);
-// EXTERNAL MODULE: ../../../../../Josh/.gemini/antigravity/scratch/nirium-sdk/actions/verify-audit-cid/node_modules/@stellar/stellar-sdk/lib/index.js
+// EXTERNAL MODULE: ../../../../../Josh/.gemini/antigravity/scratch/veyra-sdk/actions/verify-audit-cid/node_modules/@stellar/stellar-sdk/lib/index.js
 var lib = __nccwpck_require__(8814);
-;// CONCATENATED MODULE: ../../../../../Josh/.gemini/antigravity/scratch/nirium-sdk/actions/verify-audit-cid/lib/verify.js
+;// CONCATENATED MODULE: ../../../../../Josh/.gemini/antigravity/scratch/veyra-sdk/actions/verify-audit-cid/lib/verify.js
 
 
 function normalizeGatewayUrl(gatewayUrl, cid) {
@@ -60536,7 +60536,7 @@ function verifyAuditDocument(doc, cid) {
     if (doc.agent && doc.agent.key && doc.agent.signature) {
         signerKey = doc.agent.key;
         agentId = doc.agent.id;
-        statement = `nirium-audit-v1:${computedHash}`;
+        statement = `veyra-audit-v1:${computedHash}`;
         declaredStatement = doc.agent.statement;
         const isValidSig = verifyEd25519Signature(signerKey, statement, doc.agent.signature);
         signatureStatus = isValidSig ? 'valid' : 'invalid';
@@ -60622,7 +60622,7 @@ async function fetchAndVerifyCid(cid, options = {}) {
     };
 }
 
-;// CONCATENATED MODULE: ../../../../../Josh/.gemini/antigravity/scratch/nirium-sdk/actions/verify-audit-cid/lib/index.js
+;// CONCATENATED MODULE: ../../../../../Josh/.gemini/antigravity/scratch/veyra-sdk/actions/verify-audit-cid/lib/index.js
 
 
 function envInputName(name) {
@@ -60687,7 +60687,7 @@ async function appendFileIfConfigured(envName, body) {
     return true;
 }
 async function setOutput(name, value) {
-    const delimiter = `nirium_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+    const delimiter = `veyra_${Date.now()}_${Math.random().toString(16).slice(2)}`;
     const output = `${name}<<${delimiter}\n${value}\n${delimiter}\n`;
     const wroteFile = await appendFileIfConfigured('GITHUB_OUTPUT', output);
     if (!wroteFile) {
@@ -60723,7 +60723,7 @@ function renderSummary(result) {
         ['Agent id', result.agentId || 'N/A'],
     ];
     return [
-        '## Nirium Audit CID Verification',
+        '## Veyra Audit CID Verification',
         '',
         '| Field | Value |',
         '| --- | --- |',

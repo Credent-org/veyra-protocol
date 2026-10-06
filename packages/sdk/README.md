@@ -1,23 +1,23 @@
-# nirium
+# veyra
 
-Autonomous treasury and agentic-payments infrastructure for **Nirium Protocol** on Stellar/Soroban.
+Autonomous treasury and agentic-payments infrastructure for **Veyra Protocol** on Stellar/Soroban.
 
-Nirium agents rebalance USDC ↔ CETES (tokenized Mexican T-bills via Etherfuse) 24/7 without human intervention. Built for developers who want to integrate autonomous treasury management, agentic payments (x402 + MPP) — in both directions, paying for other APIs with `initX402()` and charging for your own with `x402Serve()` — and real-time market data into their applications.
+Veyra agents rebalance USDC ↔ CETES (tokenized Mexican T-bills via Etherfuse) 24/7 without human intervention. Built for developers who want to integrate autonomous treasury management, agentic payments (x402 + MPP) — in both directions, paying for other APIs with `initX402()` and charging for your own with `x402Serve()` — and real-time market data into their applications.
 
 ## Install
 
 ```bash
-npm install nirium
+npm install veyra
 ```
 
 ## Quick Start
 
 ```typescript
-import { Agent } from 'nirium';
+import { Agent } from 'veyra';
 
 const agent = new Agent({
   apiKey: 'sk_inst_your_key_here',
-  baseUrl: 'https://nirium-agent.fly.dev',
+  baseUrl: 'https://veyra-agent.fly.dev',
 });
 
 // Health check
@@ -28,8 +28,8 @@ console.log('Agent alive:', alive);
 const market = await agent.getMarket();
 console.log('XLM Price:', market.xlmPrice);
 
-// Trigger a demo strategy on Nirium's own shared testnet vault — a real,
-// working transaction, not a simulation, but it moves Nirium's testnet
+// Trigger a demo strategy on Veyra's own shared testnet vault — a real,
+// working transaction, not a simulation, but it moves Veyra's testnet
 // funds, not yours. To rebalance YOUR OWN vault, see Treasury Rebalance below.
 const result = await agent.execute('blend-yield', 'USDC', { amount: 5000 });
 console.log('Result:', result.success, result.txHash);
@@ -69,13 +69,13 @@ agent.subscribe((signal) => {
 // API Key for REST endpoints
 const agent = new Agent({
   apiKey: 'sk_inst_...',
-  baseUrl: 'https://nirium-agent.fly.dev',
+  baseUrl: 'https://veyra-agent.fly.dev',
 });
 
 // With JWT token for WebSocket (optional)
 const agent = new Agent({
   apiKey: 'sk_inst_...',
-  baseUrl: 'https://nirium-agent.fly.dev',
+  baseUrl: 'https://veyra-agent.fly.dev',
   token: 'eyJhbG...', // JWT from /api/auth/token
 });
 ```
@@ -89,7 +89,7 @@ agent.initX402({
   network: 'stellar:testnet',
 });
 
-const response = await agent.x402Fetch('https://nirium-agent.fly.dev/api/v1/premium/signals');
+const response = await agent.x402Fetch('https://veyra-agent.fly.dev/api/v1/premium/signals');
 const data = await response.json();
 ```
 
@@ -101,7 +101,7 @@ agent.initMpp({
   mode: 'pull',
 });
 
-const response = await agent.mppFetch('https://nirium-agent.fly.dev/api/v1/mpp/signals');
+const response = await agent.mppFetch('https://veyra-agent.fly.dev/api/v1/mpp/signals');
 const data = await response.json();
 ```
 
@@ -110,7 +110,7 @@ const data = await response.json();
 `initX402()` above lets you *pay* for someone else's API. This is the other side: charging for yours.
 
 ```typescript
-import { x402Serve } from 'nirium';
+import { x402Serve } from 'veyra';
 
 app.use('/premium', x402Serve({
   payTo: 'G...',                 // your Stellar address — where payments land
@@ -119,13 +119,13 @@ app.use('/premium', x402Serve({
 }));
 ```
 
-Runs on **your own server**, not Nirium's — `x402Serve()` is a client-side function you call from your own code; Nirium doesn't operate, host, or route through anything here, is never in the payment path, and never sees your end users' requests.
+Runs on **your own server**, not Veyra's — `x402Serve()` is a client-side function you call from your own code; Veyra doesn't operate, host, or route through anything here, is never in the payment path, and never sees your end users' requests.
 
-**Known limitation:** `x402Serve()` verifies and settles the payment; it does not deduplicate a payment proof across requests or rate-limit callers on its own. Add your own protection if you need either - see [issue #91](https://github.com/nirium-protocol/nirium/issues/91) for what's missing, why, and a real production reference implementation.
+**Known limitation:** `x402Serve()` verifies and settles the payment; it does not deduplicate a payment proof across requests or rate-limit callers on its own. Add your own protection if you need either - see [issue #91](https://github.com/veyra-protocol/veyra/issues/91) for what's missing, why, and a real production reference implementation.
 
-**Usage telemetry — opt-in, off by default:** set `NIRIUM_X402SERVE_TELEMETRY=true` to send a small, non-blocking usage ping to Nirium — your `payTo` address, a SHA-256 hash of your `facilitatorApiKey` (never the key itself), network, route/request counts, and this SDK's version. It never blocks, delays, or fails a payment if the ping fails, times out, or isn't sent at all. Disabled by default since v0.14.0 — it's the only channel that would otherwise connect Nirium to how a specific integrator is using this locally-run function, and that isn't a decision this package should make for you.
+**Usage telemetry — opt-in, off by default:** set `VEYRA_X402SERVE_TELEMETRY=true` to send a small, non-blocking usage ping to Veyra — your `payTo` address, a SHA-256 hash of your `facilitatorApiKey` (never the key itself), network, route/request counts, and this SDK's version. It never blocks, delays, or fails a payment if the ping fails, times out, or isn't sent at all. Disabled by default since v0.14.0 — it's the only channel that would otherwise connect Veyra to how a specific integrator is using this locally-run function, and that isn't a decision this package should make for you.
 
-**Compliance is yours.** `x402Serve()` is a general-purpose library, not a service Nirium provides to your end users. You choose what to charge for, who your `payTo` is, and which jurisdiction you operate in — you remain solely responsible for complying with the financial, tax, and consumer-protection laws that apply to your own use of it.
+**Compliance is yours.** `x402Serve()` is a general-purpose library, not a service Veyra provides to your end users. You choose what to charge for, who your `payTo` is, and which jurisdiction you operate in — you remain solely responsible for complying with the financial, tax, and consumer-protection laws that apply to your own use of it.
 
 ### Endpoint Access Model
 
@@ -143,7 +143,7 @@ Wrap your `x402Serve` handler with `x402Metrics` to get Prometheus-format counte
 
 ```typescript
 import express from 'express';
-import { x402Serve, x402Metrics } from 'nirium';
+import { x402Serve, x402Metrics } from 'veyra';
 
 const app = express();
 
@@ -211,7 +211,7 @@ No payer addresses or PII are included in metrics output — aggregates only.
 
 ## Payouts
 
-Batch disbursement, non-custodial: the node builds an **unsigned** transaction, you sign it with your own wallet and broadcast it. Nirium never holds funds and never sees your keys.
+Batch disbursement, non-custodial: the node builds an **unsigned** transaction, you sign it with your own wallet and broadcast it. Veyra never holds funds and never sees your keys.
 
 ```typescript
 const run = await agent.createPayoutRun({
@@ -240,7 +240,7 @@ The agent decides what it would do, using the same decision logic as the autonom
 const proposal = await agent.proposeTreasuryRebalance({
   vault: 'CABC...',
   caller: 'GABC...',   // must already be this vault's rebalanceManager on-chain
-  enterAt: 2.5,        // your own mandate — Nirium never supplies a default here
+  enterAt: 2.5,        // your own mandate — Veyra never supplies a default here
   exitAt: 2.0,
 });
 
@@ -252,9 +252,9 @@ if (proposal.instructions.length) {
 }
 ```
 
-### Autonomous — Nirium signs, invite-only during legal review
+### Autonomous — Veyra signs, invite-only during legal review
 
-`executeTreasuryRebalance()` has Nirium sign and submit with its own RebalanceManager key — full autonomy, no per-cycle approval. **This is invite-only while a specific legal question stays open**: whether executing on a client's behalf without taking custody still counts as regulated facilitation under Mexican law. It only runs against vaults explicitly allowlisted server-side; calling it against any other vault returns 403, and Nirium's mainnet infrastructure returns 501 for it entirely, since that box holds no signing key by design. Ask if you want autonomous execution today — otherwise, `proposeTreasuryRebalance()` above gives you the same decision-making with you as the one who signs.
+`executeTreasuryRebalance()` has Veyra sign and submit with its own RebalanceManager key — full autonomy, no per-cycle approval. **This is invite-only while a specific legal question stays open**: whether executing on a client's behalf without taking custody still counts as regulated facilitation under Mexican law. It only runs against vaults explicitly allowlisted server-side; calling it against any other vault returns 403, and Veyra's mainnet infrastructure returns 501 for it entirely, since that box holds no signing key by design. Ask if you want autonomous execution today — otherwise, `proposeTreasuryRebalance()` above gives you the same decision-making with you as the one who signs.
 
 ## Audit Trail
 
@@ -277,12 +277,12 @@ Anchor a **hash** rather than the data itself: IPFS content cannot be deleted, s
 
 ## Links
 
-- [Documentation](https://nirium.xyz/docs)
-- [Developer Sandbox](https://nirium.xyz/sandbox)
-- [API Reference](https://nirium.xyz/docs/api)
-- [MCP Server Integration](https://nirium.xyz/docs/mcp)
-- [GitHub](https://github.com/nirium-protocol/nirium-sdk)
+- [Documentation](https://veyra.xyz/docs)
+- [Developer Sandbox](https://veyra.xyz/sandbox)
+- [API Reference](https://veyra.xyz/docs/api)
+- [MCP Server Integration](https://veyra.xyz/docs/mcp)
+- [GitHub](https://github.com/veyra-protocol/veyra-sdk)
 
 ## License
 
-Apache 2.0 — Nirium Protocol
+Apache 2.0 — Veyra Protocol

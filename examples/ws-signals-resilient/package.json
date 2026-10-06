@@ -9,7 +9,7 @@
     "test": "node --experimental-strip-types --test test/smoke.test.js"
   },
   "dependencies": {
-    "nirium": "file:../../packages/sdk",
+    "veyra": "file:../../packages/sdk",
     "ws": "^8.18.0"
   },
   "devDependencies": {

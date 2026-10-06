@@ -1,6 +1,6 @@
 # Devlog
 
-Real findings from running Nirium in production. No marketing copy here, just what broke, how we found it, and where it stands.
+Real findings from running Veyra in production. No marketing copy here, just what broke, how we found it, and where it stands.
 
 ## 2026-08-13: A rejected x402 payment settled anyway (upstream facilitator)
 
@@ -25,9 +25,9 @@ https://github.com/x402-foundation/x402/issues/3148
 
 **OpenZeppelin's `fee-abstraction` module: an expiration check that checks the wrong thing.** Read closely because it's the module backing our facilitator's fee-sponsor mechanism. In `Lazy` approval mode, when an existing token allowance is already large enough, the crate validates that the caller's newly passed `expiration_ledger` parameter is in the future, but that value is never actually applied to the real, on-chain allowance, which keeps whatever expiration a prior `approve()` call set. The crate's own test suite demonstrates the resulting false rejection: a fee collection against a genuinely still-valid allowance panics anyway, purely because of the unrelated parameter. Filed: [OpenZeppelin/stellar-contracts#840](https://github.com/OpenZeppelin/stellar-contracts/issues/840). Open, awaiting response.
 
-## 2026-08-15: Nirium added to Stellar's official developer skills catalog
+## 2026-08-15: Veyra added to Stellar's official developer skills catalog
 
-Nirium is listed in Stellar's official developer skills catalog (skills.stellar.org), reviewed and merged by SDF DevRel: [stellar/stellar-dev-skill#96](https://github.com/stellar/stellar-dev-skill/pull/96). Skill source: [`skills/nirium-agentic-payments/SKILL.md`](../skills/nirium-agentic-payments/SKILL.md).
+Veyra is listed in Stellar's official developer skills catalog (skills.stellar.org), reviewed and merged by SDF DevRel: [stellar/stellar-dev-skill#96](https://github.com/stellar/stellar-dev-skill/pull/96). Skill source: [`skills/veyra-agentic-payments/SKILL.md`](../skills/veyra-agentic-payments/SKILL.md).
 
 ## 2026-08-19: A CORS bug, an ecosystem corroboration, and an open question to OpenZeppelin
 

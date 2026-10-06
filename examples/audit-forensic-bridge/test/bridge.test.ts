@@ -38,6 +38,6 @@ describe('Audit Forensic Bridge - Cryptographic Verification', () => {
   test('enforces domain separation prefix in message', () => {
     const sha = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
     const message = buildDomainMessage(sha);
-    assert.strictEqual(message.toString('utf8'), 'nirium-audit-v1:' + sha);
+    assert.strictEqual(message.toString('utf8'), 'veyra-audit-v1:' + sha);
   });
 });

@@ -1,11 +1,11 @@
 {
-  "name": "nirium-cli",
+  "name": "veyra-cli",
   "version": "1.1.4",
-  "description": "Nirium CLI — scaffold Stellar agent projects and check agent status",
-  "main": "bin/nirium.js",
+  "description": "Veyra CLI — scaffold Stellar agent projects and check agent status",
+  "main": "bin/veyra.js",
   "type": "module",
   "bin": {
-    "nirium": "bin/nirium.js"
+    "veyra": "bin/veyra.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,15 +15,15 @@
     "soroban",
     "x402",
     "ai-agents",
-    "nirium",
+    "veyra",
     "cli"
   ],
-  "author": "Nirium Team",
+  "author": "Veyra Team",
   "license": "Apache-2.0",
   "dependencies": {
     "axios": "^1.13.6",
     "commander": "^11.0.0",
-    "nirium": "^0.15.0",
+    "veyra": "^0.15.0",
     "express": "^5.1.0",
     "@stellar/stellar-sdk": "^14.5.0"
   },
@@ -37,9 +37,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nirium-protocol/nirium.git"
+    "url": "git+https://github.com/veyra-protocol/veyra.git"
   },
-  "homepage": "https://nirium.xyz",
+  "homepage": "https://veyra.xyz",
   "engines": {
     "node": ">=18"
   }

@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 import express, { type Express } from 'express';
 import { Keypair } from '@stellar/stellar-sdk';
-import { x402Serve } from 'nirium';
+import { x402Serve } from 'veyra';
 // See vendor/routedock/PROVENANCE.md.
 import { signManifest } from '../vendor/routedock/src/manifest/sign.ts';
 
@@ -36,7 +36,7 @@ export function createApp(config: CreateAppConfig): Express {
     const app = express();
 
     app.get('/health', (_req, res) => {
-        res.json({ ok: true, service: 'nirium-routedock-manifest-example' });
+        res.json({ ok: true, service: 'veyra-routedock-manifest-example' });
     });
 
     // --- The actual charge: x402Serve(), completely unmodified. ------------
@@ -99,18 +99,18 @@ if (isMain) {
 
 function runServer(): void {
     const port = Number(process.env.PORT ?? DEFAULT_PORT);
-    const payeeSecret = process.env.NIRIUM_ROUTEDOCK_PAYEE_SECRET;
+    const payeeSecret = process.env.VEYRA_ROUTEDOCK_PAYEE_SECRET;
     if (!payeeSecret) {
         throw new Error(
-            'NIRIUM_ROUTEDOCK_PAYEE_SECRET is required — it is both the x402Serve() payTo '
+            'VEYRA_ROUTEDOCK_PAYEE_SECRET is required — it is both the x402Serve() payTo '
             + 'account and the key that signs the RouteDock manifest. See .env.example.',
         );
     }
 
     const app = createApp({
         payeeSecret,
-        x402Network: (process.env.NIRIUM_X402_NETWORK as 'stellar:testnet' | 'stellar:pubnet') ?? DEFAULT_X402_NETWORK,
-        priceUsdc: process.env.NIRIUM_X402_PRICE_USDC ?? DEFAULT_PRICE_USDC,
+        x402Network: (process.env.VEYRA_X402_NETWORK as 'stellar:testnet' | 'stellar:pubnet') ?? DEFAULT_X402_NETWORK,
+        priceUsdc: process.env.VEYRA_X402_PRICE_USDC ?? DEFAULT_PRICE_USDC,
         facilitatorApiKey: process.env.FACILITATOR_API_KEY,
     });
 

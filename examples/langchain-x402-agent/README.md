@@ -1,6 +1,6 @@
 # LangChain x402 agent
 
-Minimal LangChain agent that pays a real Nirium x402 endpoint on Stellar testnet through `NiriumX402Tool`.
+Minimal LangChain agent that pays a real Veyra x402 endpoint on Stellar testnet through `VeyraX402Tool`.
 
 The tool wraps `Agent.init_x402` / `Agent.x402_fetch`. It does not implement a second payment client. The credential header is `PAYMENT-SIGNATURE` (x402 v2).
 
@@ -26,15 +26,15 @@ Optional: set `OPENAI_API_KEY` to run the same loop with a real chat model. With
 python agent.py
 ```
 
-Expected result: the agent calls `nirium_x402_fetch`, the SDK completes the 402 flow, and the protected JSON body is printed. If the facilitator returns a settlement hash, the script prints a `stellar.expert` testnet link.
+Expected result: the agent calls `veyra_x402_fetch`, the SDK completes the 402 flow, and the protected JSON body is printed. If the facilitator returns a settlement hash, the script prints a `stellar.expert` testnet link.
 
 ## Verify the payment
 
 1. Copy the printed `x402_settlement_tx` value, or look up the paid response / facilitator receipt.
 2. Open `https://stellar.expert/explorer/testnet/tx/<TRANSACTION_HASH>`.
-3. Confirm the destination and amount match the premium route (`/api/v1/premium/signals` is $0.02 USDC on the public Nirium testnet agent).
+3. Confirm the destination and amount match the premium route (`/api/v1/premium/signals` is $0.02 USDC on the public Veyra testnet agent).
 
-This example was paid end-to-end against the public Nirium testnet endpoint on 23 August 2026. Settlement hash:
+This example was paid end-to-end against the public Veyra testnet endpoint on 23 August 2026. Settlement hash:
 
 [`40b8e24bb4335382d7834364347198db912151bc0826b0eae8b50ff52f2db040`](https://stellar.expert/explorer/testnet/tx/40b8e24bb4335382d7834364347198db912151bc0826b0eae8b50ff52f2db040)
 

@@ -4,7 +4,7 @@
  * Editor.
  *
  * This is NOT a mocked test. It starts the real Express app from
- * src/server.ts, then drives it with the real `nirium` x402 client
+ * src/server.ts, then drives it with the real `veyra` x402 client
  * against the real OpenZeppelin Channels testnet facilitator and real
  * Stellar testnet. Run it after funding PLAYER_SECRET_KEY's account with
  * testnet USDC (see README.md) — its output includes the settled
@@ -15,7 +15,7 @@
  * SUDK signs desktop (non-WebGL) transactions directly with the account's
  * ed25519 keypair (`MuxedAccount.Sign(byte[] data)` in
  * StellarDevToolkit/.../Stellar/MuxedAccount.cs — confirmed against the
- * toolkit's actual source, not guessed). That is exactly what nirium's
+ * toolkit's actual source, not guessed). That is exactly what veyra's
  * `agent.initX402({ secretKey })` does: `createEd25519Signer` wraps a raw
  * secret key and signs the Soroban authorization entry's preimage hash
  * directly. This script exercises that path for real, end to end.
@@ -45,7 +45,7 @@
  */
 import "dotenv/config";
 
-import { Agent } from "nirium";
+import { Agent } from "veyra";
 
 import { createApp, PAID_ROUTE } from "../src/server.js";
 
@@ -75,7 +75,7 @@ async function main(): Promise<void> {
   console.log(`[smoke] local x402 server listening on ${baseUrl}`);
 
   try {
-    // `apiKey` here is for nirium's unrelated REST API surface (Agent
+    // `apiKey` here is for veyra's unrelated REST API surface (Agent
     // requires one in its config type) — it plays no role in x402 payments.
     const agent = new Agent({ apiKey: "unused-for-x402", baseUrl });
 

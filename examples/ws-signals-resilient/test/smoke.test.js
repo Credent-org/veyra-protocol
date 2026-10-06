@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { WebSocketServer } from 'ws';
-import { ResilientSignalClient } from 'nirium';
+import { ResilientSignalClient } from 'veyra';
 
 test('Smoke test: ResilientSignalClient instantiates and handles stream lifecycle', async () => {
   const wss = new WebSocketServer({ port: 0 });

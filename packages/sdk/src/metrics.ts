@@ -30,7 +30,7 @@
  *
  * @example
  * ```typescript
- * import { x402Serve, x402Metrics } from 'nirium';
+ * import { x402Serve, x402Metrics } from 'veyra';
  *
  * const { handler, metricsHandler } = x402Metrics(
  *   x402Serve({

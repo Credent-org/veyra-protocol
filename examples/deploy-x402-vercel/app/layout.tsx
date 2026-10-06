@@ -1,7 +1,7 @@
 import React from "react";
 
 export const metadata = {
-  title: "x402 Vercel API Template — Nirium",
+  title: "x402 Vercel API Template — Veyra",
   description: "One-click Vercel deployment template for x402 pay-per-request APIs",
 };
 
